@@ -90,10 +90,11 @@ def load_model_quantized(model_name, device):
     """
     양자화 방식으로 모델 로드 (4-bit)
     GPU 메모리가 부족한 경우 사용
+    Multi-GPU 자동 분산 지원
     """
     print(f"\n{'='*60}")
     print(f"Loading model: {model_name}")
-    print(f"Mode: 4-bit Quantization")
+    print(f"Mode: 4-bit Quantization (Multi-GPU)")
     print(f"{'='*60}\n")
 
     if device != "cuda":
@@ -101,16 +102,35 @@ def load_model_quantized(model_name, device):
 
     start_time = time.time()
 
-    # 양자화 설정
+    # 사용 가능한 GPU 확인
+    num_gpus = torch.cuda.device_count()
+    print(f"Available GPUs: {num_gpus}")
+    for i in range(num_gpus):
+        gpu_name = torch.cuda.get_device_name(i)
+        gpu_memory = torch.cuda.get_device_properties(i).total_memory / 1e9
+        print(f"  GPU {i}: {gpu_name} ({gpu_memory:.1f} GB)")
+
+    # Multi-GPU 메모리 할당 설정
+    max_memory = {}
+    for i in range(num_gpus):
+        # 각 GPU의 90% 메모리 사용 (시스템 안정성을 위해)
+        total_mem = torch.cuda.get_device_properties(i).total_memory
+        max_memory[i] = f"{int(total_mem * 0.9 / 1e9)}GiB"
+    max_memory["cpu"] = "30GiB"  # CPU 오프로드 허용
+
+    print(f"\nMemory allocation: {max_memory}")
+
+    # 양자화 설정 (CPU 오프로드 지원)
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.float16
+        bnb_4bit_compute_dtype=torch.float16,
+        llm_int8_enable_fp32_cpu_offload=True  # CPU 오프로드 허용
     )
 
     # Tokenizer 로드
-    print("Loading tokenizer...")
+    print("\nLoading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         token=os.getenv("HUGGINGFACE_TOKEN")
@@ -121,21 +141,25 @@ def load_model_quantized(model_name, device):
 
     # 모델 로드
     print("Loading model with 4-bit quantization...")
+    print("This may take 2-5 minutes for large models...")
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         quantization_config=bnb_config,
         device_map="auto",
-        token=os.getenv("HUGGINGFACE_TOKEN")
+        max_memory=max_memory,
+        token=os.getenv("HUGGINGFACE_TOKEN"),
+        low_cpu_mem_usage=True
     )
 
     load_time = time.time() - start_time
     print(f"\n✓ Model loaded in {load_time:.2f} seconds")
 
-    # 메모리 사용량 출력
-    allocated = torch.cuda.memory_allocated() / 1e9
-    reserved = torch.cuda.memory_reserved() / 1e9
-    print(f"  GPU Memory Allocated: {allocated:.2f} GB")
-    print(f"  GPU Memory Reserved: {reserved:.2f} GB")
+    # 각 GPU별 메모리 사용량 출력
+    print(f"\nGPU Memory Usage:")
+    for i in range(num_gpus):
+        allocated = torch.cuda.memory_allocated(i) / 1e9
+        reserved = torch.cuda.memory_reserved(i) / 1e9
+        print(f"  GPU {i}: Allocated {allocated:.2f} GB, Reserved {reserved:.2f} GB")
 
     return model, tokenizer
 

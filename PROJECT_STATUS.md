@@ -1,23 +1,30 @@
 # 프로젝트 현황 및 로드맵
 
 작성일: 2025-12-11
+최종 업데이트: 2025-12-13
 
 ## 프로젝트 개요
 
 **목표:** LLM Fine-tuning + End-to-End MLOps 파이프라인 구축
 
 **핵심 기술:**
-- LLM: Mistral-7B / LLaMA-2-7B
+- LLM: **LLaMA-3-8B-Instruct** (현재) / Mistral-7B / LLaMA-2-7B
 - Fine-tuning: LoRA / QLoRA (PEFT)
 - Serving: vLLM, FastAPI
 - MLOps: MLflow, DVC, Docker
 - 모니터링: Prometheus + Grafana
 
+**현재 하드웨어:**
+- GPU 0: NVIDIA RTX 5090 (31GB VRAM) - 메인 사용
+- GPU 1: NVIDIA RTX 5060 Ti (15GB VRAM) - 보조
+- CUDA 12.8, PyTorch 2.9.0
+- Python 3.12.3
+
 ---
 
 ## 완료된 작업 ✅
 
-### Phase 0: 프로젝트 초기화
+### Phase 0: 프로젝트 초기화 ✅ 완료
 - [x] 프로젝트 디렉토리 구조 생성
 - [x] requirements.txt 작성 (모든 의존성 포함)
 - [x] 환경 변수 템플릿 (.env.example)
@@ -26,6 +33,9 @@
 - [x] README.md 작성
 - [x] QUICKSTART.md 작성
 - [x] setup.sh 자동화 스크립트
+- [x] 가상환경 생성 및 패키지 설치
+- [x] GPU 환경 확인 완료 (RTX 5090 + RTX 5060 Ti)
+- [x] HuggingFace 토큰 설정
 
 **핵심 파일:**
 ```
@@ -36,39 +46,57 @@ README.md            # 프로젝트 개요
 QUICKSTART.md        # 빠른 시작 가이드
 ```
 
-### Phase 1: 베이스 모델 테스트
-- [x] GPU 환경 확인 스크립트 (`src/check_gpu.py`)
-- [x] 기본 LLM 로드 및 추론 테스트 (`src/01_test_base_model.py`)
-- [x] Gradio 인터랙티브 데모 (`src/02_gradio_demo.py`)
-- [x] 성능 벤치마크 스크립트 (`src/03_benchmark.py`)
+### Phase 1: 베이스 모델 테스트 ✅ 완료
+- [x] GPU 환경 확인 스크립트 작성 (`src/check_gpu.py`)
+- [x] GPU 환경 확인 실행 완료 (RTX 5090 + RTX 5060 Ti)
+- [x] 기본 LLM 로드 및 추론 테스트 스크립트 작성 (`src/01_test_base_model.py`)
+- [x] Gradio 인터랙티브 데모 스크립트 작성 (`src/02_gradio_demo.py`)
+- [x] 성능 벤치마크 스크립트 작성 (`src/03_benchmark.py`)
+- [x] 모델 선택: LLaMA-3-8B-Instruct (실습 최적화)
+- [x] LLaMA-3-8B 모델 다운로드 완료
+- [x] LLaMA-3-8B 추론 테스트 성공 (Full precision)
+- [x] Gradio 데모 실행 성공 (http://localhost:7860)
+- [x] Multi-GPU 스크립트 수정 완료
+- [ ] 성능 벤치마크 실행 (선택사항)
 
 **주요 기능:**
 - Full precision / 4-bit quantization 옵션
 - GPU 메모리 사용량 측정
-- Latency, Throughput 벤치마크
-- 웹 UI 데모
+- 실시간 채팅 인터페이스 (Gradio)
+- 파라미터 조정 가능 (temperature, top-p, etc.)
+- Multi-GPU 자동 분산 지원
 
-**테스트 완료:**
-- macOS 환경에서 스크립트 실행 검증
-- Linux GPU 서버용 코드 준비 완료
+**실행 결과:**
+- 환경: RTX 5090 (31GB VRAM)
+- 모델: LLaMA-3-8B-Instruct
+- 로딩 방식: Full precision (FP16)
+- VRAM 사용량: ~14GB
+- 상태: ✅ 정상 동작 확인
 
-### Phase 2: Fine-tuning
-- [x] 데이터셋 로드 스크립트 (`src/data/01_load_dataset.py`)
+**변경 사항:**
+- LLaMA-3-70B → LLaMA-3-8B (메모리 효율성 및 실습 최적화)
+- Gradio 최신 버전 호환성 수정
+
+### Phase 2: Fine-tuning 📝 스크립트 작성 완료
+- [x] 데이터셋 로드 스크립트 작성 (`src/data/01_load_dataset.py`)
   - 공개 데이터셋 다운로드
   - 데이터 탐색 및 분석
   - 학습용 포맷 변환
-- [x] 합성 데이터 생성 (`src/data/02_generate_synthetic_data.py`)
+- [x] 합성 데이터 생성 스크립트 작성 (`src/data/02_generate_synthetic_data.py`)
   - MLOps/DevOps 도메인 특화
   - OpenAI API 통합 (선택)
   - 템플릿 기반 생성 (무료)
-- [x] LoRA fine-tuning (`src/train/01_lora_finetune.py`)
+- [x] LoRA fine-tuning 스크립트 작성 (`src/train/01_lora_finetune.py`)
   - PEFT 통합
   - MLflow 실험 추적
   - Instruction-following 포맷
-- [x] QLoRA fine-tuning (`src/train/02_qlora_finetune.py`)
+- [x] QLoRA fine-tuning 스크립트 작성 (`src/train/02_qlora_finetune.py`)
   - 4-bit 양자화
   - 메모리 효율적 학습
   - MLflow 통합
+- [ ] 실제 데이터셋 준비 실행
+- [ ] Fine-tuning 학습 실행
+- [ ] MLflow 실험 추적 확인
 
 **주요 기능:**
 - 여러 데이터셋 지원 (Alpaca, Dolly, etc.)
@@ -76,6 +104,10 @@ QUICKSTART.md        # 빠른 시작 가이드
 - 하이퍼파라미터 커스터마이징
 - MLflow 자동 로깅
 - 학습 진행 상황 추적
+
+**다음 실행 예정:**
+- LLaMA-3-70B 모델 테스트 완료 후 진행
+- QLoRA 방식으로 메모리 효율적 학습 계획
 
 ---
 
@@ -236,42 +268,56 @@ mlops-project/
 
 ## 다음 실행 단계
 
-### 즉시 실행 가능 (GPU 서버에서)
+### 완료된 단계 ✅
 
-1. **환경 설정**
+1. **✅ 환경 설정** - 완료
    ```bash
-   ./setup.sh
+   source venv/bin/activate
    python src/check_gpu.py
    ```
 
-2. **베이스 모델 테스트**
+2. **✅ 베이스 모델 테스트** - 완료
    ```bash
-   python src/01_test_base_model.py
+   python src/01_test_base_model.py  # Full precision
    ```
 
-3. **데이터 준비**
+3. **✅ Gradio 데모** - 완료
    ```bash
-   # 옵션 A: 공개 데이터셋
+   python src/02_gradio_demo.py  # http://localhost:7860
+   ```
+
+### 다음 진행 단계 (Phase 2: Fine-tuning)
+
+4. **🔄 데이터 준비** - 다음 단계
+   ```bash
+   # 옵션 A: 공개 데이터셋 (권장)
    python src/data/01_load_dataset.py
 
-   # 옵션 B: 합성 데이터
+   # 옵션 B: 합성 데이터 생성
    python src/data/02_generate_synthetic_data.py
    ```
 
-4. **Fine-tuning**
+5. **⏳ Fine-tuning 학습**
    ```bash
-   # 메모리가 충분한 경우 (14GB+ VRAM)
+   # LoRA Fine-tuning (14GB+ VRAM)
    python src/train/01_lora_finetune.py
 
-   # 메모리가 부족한 경우 (4GB+ VRAM)
+   # 또는 QLoRA (4GB+ VRAM, 메모리 효율적)
    python src/train/02_qlora_finetune.py
    ```
 
-5. **실험 확인**
+6. **⏳ MLflow 실험 추적 확인**
    ```bash
    mlflow ui
    # http://localhost:5000
    ```
+
+### 선택 사항
+
+**성능 벤치마크** (Phase 1)
+```bash
+python src/03_benchmark.py
+```
 
 ---
 
@@ -344,11 +390,25 @@ mlops-project/
 
 ### v0.1 (2025-12-11)
 - ✅ Phase 0: 프로젝트 초기화
-- ✅ Phase 1: 베이스 모델 테스트 스크립트
-- ✅ Phase 2: Fine-tuning 스크립트
+- ✅ Phase 1: 베이스 모델 테스트 스크립트 작성
+- ✅ Phase 2: Fine-tuning 스크립트 작성
 - 📝 문서 작성 (README, QUICKSTART, PROJECT_STATUS)
 
-### v0.2 (예정)
+### v0.1.1 (2025-12-13) - 현재
+- ✅ GPU 환경 확인 및 검증 (RTX 5090 + RTX 5060 Ti)
+- ✅ 모델 선택: LLaMA-3-8B-Instruct (실습 최적화)
+- ✅ Phase 1 완료: 베이스 모델 테스트
+  - LLaMA-3-8B 모델 다운로드 및 로딩 성공
+  - Full precision 추론 테스트 성공
+  - Gradio 웹 데모 실행 성공
+  - Multi-GPU 스크립트 개선
+- 📝 PROJECT_STATUS.md 업데이트
+
+### v0.2 (진행 예정)
+- 🔄 Phase 2 실행: Fine-tuning
+  - 데이터셋 준비
+  - LoRA/QLoRA 학습 실행
+  - MLflow 실험 추적
 - 🚧 Phase 3: 최적화 (vLLM, LangChain)
 - 🚧 평가 스크립트
 - 🚧 Jupyter 노트북
@@ -361,6 +421,13 @@ mlops-project/
 
 ---
 
-**프로젝트 진행률:** Phase 2 완료 (50% 완성)
+**프로젝트 진행률:** Phase 1 완료, Phase 2 준비 중 (40% 완성)
 
-**다음 마일스톤:** Phase 3 시작 (vLLM 서빙)
+**현재 상태:**
+- ✅ Phase 0: 환경 준비 완료
+- ✅ Phase 1: 베이스 모델 테스트 완료
+- 🔄 Phase 2: Fine-tuning 준비 중
+- ⏳ Phase 3: 최적화 대기
+- ⏳ Phase 4: 프로덕션화 대기
+
+**다음 마일스톤:** Phase 2 데이터 준비 및 Fine-tuning 실행

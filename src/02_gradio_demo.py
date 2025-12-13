@@ -144,14 +144,7 @@ def generate_response(
 def create_interface():
     """Gradio 인터페이스 생성"""
 
-    # CSS 스타일
-    custom_css = """
-    .gradio-container {
-        max-width: 900px !important;
-    }
-    """
-
-    # ChatInterface 생성
+    # ChatInterface 생성 (Gradio 최신 버전 호환)
     demo = gr.ChatInterface(
         fn=generate_response,
         title="🤖 MLOps Chatbot Demo",
@@ -160,10 +153,10 @@ def create_interface():
         아래 설정을 조정하여 응답 스타일을 변경할 수 있습니다.
         """,
         examples=[
-            "What is MLOps?",
-            "Explain machine learning in simple terms.",
-            "Write a Python function to sort a list.",
-            "What are the benefits of CI/CD?",
+            ["What is MLOps?", 256, 0.7, 0.9, 1.1],
+            ["Explain machine learning in simple terms.", 256, 0.7, 0.9, 1.1],
+            ["Write a Python function to sort a list.", 256, 0.7, 0.9, 1.1],
+            ["What are the benefits of CI/CD?", 256, 0.7, 0.9, 1.1],
         ],
         additional_inputs=[
             gr.Slider(
@@ -199,8 +192,6 @@ def create_interface():
                 info="반복 방지 정도"
             ),
         ],
-        theme=gr.themes.Soft(),
-        css=custom_css,
     )
 
     return demo

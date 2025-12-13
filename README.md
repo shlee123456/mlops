@@ -12,9 +12,10 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 ## 기술 스택
 
 ### Core ML
-- **Base Model**: Mistral-7B-Instruct / LLaMA-2-7B
+- **Base Model**: **LLaMA-3-70B-Instruct** (현재) / Mistral-7B-Instruct / LLaMA-2-7B
 - **Fine-tuning**: LoRA, QLoRA (PEFT)
 - **Framework**: PyTorch, Transformers, Accelerate
+- **Hardware**: RTX 5090 (31GB) + RTX 5060 Ti (15GB)
 
 ### MLOps Tools
 - **Experiment Tracking**: MLflow
@@ -83,20 +84,23 @@ python src/check_gpu.py
 
 ## Phase별 가이드
 
-### Phase 0: 환경 준비 ✅
+### Phase 0: 환경 준비 ✅ 완료
 - [x] 프로젝트 구조 생성
 - [x] 가상환경 설정
 - [x] requirements.txt 작성
-- [ ] GPU 환경 확인 스크립트
+- [x] GPU 환경 확인 스크립트
+- [x] GPU 환경 검증 (RTX 5090 + RTX 5060 Ti)
+- [x] LLaMA-3-70B 모델 설정
 
-### Phase 1: 베이스 챗봇 (1-2일)
-- [ ] 기본 LLM 로드 및 추론 테스트
-- [ ] Gradio UI 데모
-- [ ] 성능 벤치마크
+### Phase 1: 베이스 챗봇 ✅ 완료
+- [x] LLaMA-3-8B 모델 다운로드
+- [x] 기본 LLM 로드 및 추론 테스트 (Full precision)
+- [x] Gradio UI 데모 (http://localhost:7860)
+- [ ] 성능 벤치마크 (선택사항)
 
-### Phase 2: Fine-tuning (3-4일)
+### Phase 2: Fine-tuning 🔄 다음 단계
 - [ ] 학습 데이터 준비
-- [ ] 합성 데이터 생성 (GPT-4)
+- [ ] 합성 데이터 생성
 - [ ] LoRA fine-tuning
 - [ ] QLoRA fine-tuning (4-bit)
 - [ ] MLflow 실험 추적
