@@ -1,7 +1,7 @@
 # 프로젝트 현황 및 로드맵
 
 작성일: 2025-12-11
-최종 업데이트: 2025-12-13
+최종 업데이트: 2025-12-13 (Phase 2 데이터 준비 완료)
 
 ## 프로젝트 개요
 
@@ -77,13 +77,13 @@ QUICKSTART.md        # 빠른 시작 가이드
 - LLaMA-3-70B → LLaMA-3-8B (메모리 효율성 및 실습 최적화)
 - Gradio 최신 버전 호환성 수정
 
-### Phase 2: Fine-tuning 📝 스크립트 작성 완료
+### Phase 2: Fine-tuning 🔄 데이터 준비 완료
 - [x] 데이터셋 로드 스크립트 작성 (`src/data/01_load_dataset.py`)
   - 공개 데이터셋 다운로드
   - 데이터 탐색 및 분석
   - 학습용 포맷 변환
 - [x] 합성 데이터 생성 스크립트 작성 (`src/data/02_generate_synthetic_data.py`)
-  - MLOps/DevOps 도메인 특화
+  - MLOps/DevOps 도메인 특화 (25개 주제)
   - OpenAI API 통합 (선택)
   - 템플릿 기반 생성 (무료)
 - [x] LoRA fine-tuning 스크립트 작성 (`src/train/01_lora_finetune.py`)
@@ -94,20 +94,42 @@ QUICKSTART.md        # 빠른 시작 가이드
   - 4-bit 양자화
   - 메모리 효율적 학습
   - MLflow 통합
-- [ ] 실제 데이터셋 준비 실행
-- [ ] Fine-tuning 학습 실행
-- [ ] MLflow 실험 추적 확인
+- [x] 학습 데이터셋 준비 완료 ✅
+  - HuggingFace no_robots 데이터셋 다운로드
+  - 9,499개 고품질 instruction-following examples
+  - JSONL 포맷 변환 완료 (`data/processed/no_robots_train.jsonl`)
+- [x] 합성 데이터 생성 실행 완료 ✅
+  - 100개 MLOps/DevOps Q&A 생성
+  - 템플릿 기반 생성 (`data/synthetic_train.json`)
+- [ ] LoRA Fine-tuning 학습 실행 (준비 완료, 실행 대기)
+- [ ] QLoRA Fine-tuning 학습 실행 (준비 완료, 실행 대기)
+- [ ] MLflow 실험 추적 및 비교 분석
 
 **주요 기능:**
-- 여러 데이터셋 지원 (Alpaca, Dolly, etc.)
-- 자동 데이터 전처리
+- 여러 데이터셋 지원 (no_robots, Alpaca, Dolly, etc.)
+- 자동 데이터 전처리 및 포맷 변환
 - 하이퍼파라미터 커스터마이징
 - MLflow 자동 로깅
 - 학습 진행 상황 추적
 
-**다음 실행 예정:**
-- LLaMA-3-70B 모델 테스트 완료 후 진행
-- QLoRA 방식으로 메모리 효율적 학습 계획
+**준비 완료 상태:**
+- 데이터: `data/processed/no_robots_train.jsonl` (9,499 examples)
+- 모델: LLaMA-3-8B-Instruct
+- 환경: RTX 5090 (31GB VRAM)
+- 학습 방식: LoRA (FP16) + QLoRA (4-bit)
+- 실험 추적: MLflow 설정 완료
+
+**다음 실행 단계:**
+```bash
+# LoRA Fine-tuning (예상 VRAM: 18-24GB)
+python src/train/01_lora_finetune.py
+
+# QLoRA Fine-tuning (예상 VRAM: 8-12GB)
+python src/train/02_qlora_finetune.py
+
+# MLflow UI
+mlflow ui  # http://localhost:5000
+```
 
 ---
 
@@ -288,28 +310,31 @@ mlops-project/
 
 ### 다음 진행 단계 (Phase 2: Fine-tuning)
 
-4. **🔄 데이터 준비** - 다음 단계
+4. **✅ 데이터 준비** - 완료
    ```bash
-   # 옵션 A: 공개 데이터셋 (권장)
-   python src/data/01_load_dataset.py
+   # ✅ 완료: HuggingFace no_robots 데이터셋 (9,499 examples)
+   # 파일: data/processed/no_robots_train.jsonl
 
-   # 옵션 B: 합성 데이터 생성
-   python src/data/02_generate_synthetic_data.py
+   # ✅ 완료: 합성 데이터 생성 (100 examples)
+   # 파일: data/synthetic_train.json
    ```
 
-5. **⏳ Fine-tuning 학습**
+5. **🔄 Fine-tuning 학습** - 다음 단계
    ```bash
-   # LoRA Fine-tuning (14GB+ VRAM)
+   # LoRA Fine-tuning (예상 VRAM: 18-24GB)
    python src/train/01_lora_finetune.py
+   # 입력: data/processed/no_robots_train.jsonl
 
-   # 또는 QLoRA (4GB+ VRAM, 메모리 효율적)
+   # QLoRA Fine-tuning (예상 VRAM: 8-12GB, 메모리 효율적)
    python src/train/02_qlora_finetune.py
+   # 입력: data/processed/no_robots_train.jsonl
    ```
 
 6. **⏳ MLflow 실험 추적 확인**
    ```bash
    mlflow ui
    # http://localhost:5000
+   # LoRA vs QLoRA 성능/메모리/속도 비교
    ```
 
 ### 선택 사항
@@ -394,7 +419,7 @@ python src/03_benchmark.py
 - ✅ Phase 2: Fine-tuning 스크립트 작성
 - 📝 문서 작성 (README, QUICKSTART, PROJECT_STATUS)
 
-### v0.1.1 (2025-12-13) - 현재
+### v0.1.1 (2025-12-13 오전)
 - ✅ GPU 환경 확인 및 검증 (RTX 5090 + RTX 5060 Ti)
 - ✅ 모델 선택: LLaMA-3-8B-Instruct (실습 최적화)
 - ✅ Phase 1 완료: 베이스 모델 테스트
@@ -404,11 +429,23 @@ python src/03_benchmark.py
   - Multi-GPU 스크립트 개선
 - 📝 PROJECT_STATUS.md 업데이트
 
+### v0.1.2 (2025-12-13 오후) - 현재
+- ✅ Phase 2 데이터 준비 완료
+  - HuggingFace no_robots 데이터셋 다운로드 (9,499 examples)
+  - JSONL 포맷 변환 완료
+  - 합성 데이터 생성 스크립트 실행 (100 examples)
+  - 데이터 품질 검증 완료
+- ✅ Fine-tuning 환경 설정 완료
+  - LoRA 스크립트 준비 완료
+  - QLoRA 스크립트 준비 완료
+  - MLflow 설정 확인
+- 📝 README.md 및 PROJECT_STATUS.md 업데이트
+
 ### v0.2 (진행 예정)
 - 🔄 Phase 2 실행: Fine-tuning
-  - 데이터셋 준비
-  - LoRA/QLoRA 학습 실행
-  - MLflow 실험 추적
+  - LoRA 학습 실행
+  - QLoRA 학습 실행
+  - MLflow 실험 추적 및 비교
 - 🚧 Phase 3: 최적화 (vLLM, LangChain)
 - 🚧 평가 스크립트
 - 🚧 Jupyter 노트북
@@ -421,13 +458,17 @@ python src/03_benchmark.py
 
 ---
 
-**프로젝트 진행률:** Phase 1 완료, Phase 2 준비 중 (40% 완성)
+**프로젝트 진행률:** Phase 1 완료, Phase 2 데이터 준비 완료 (50% 완성)
 
 **현재 상태:**
 - ✅ Phase 0: 환경 준비 완료
 - ✅ Phase 1: 베이스 모델 테스트 완료
-- 🔄 Phase 2: Fine-tuning 준비 중
+- 🔄 Phase 2: 데이터 준비 완료, Fine-tuning 실행 대기
 - ⏳ Phase 3: 최적화 대기
 - ⏳ Phase 4: 프로덕션화 대기
 
-**다음 마일스톤:** Phase 2 데이터 준비 및 Fine-tuning 실행
+**다음 마일스톤:** Phase 2 LoRA/QLoRA Fine-tuning 실행 및 MLflow 비교 분석
+
+**준비 완료 데이터:**
+- `data/processed/no_robots_train.jsonl` - 9,499개 고품질 examples
+- `data/synthetic_train.json` - 100개 MLOps/DevOps Q&A
