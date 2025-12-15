@@ -171,10 +171,12 @@ def setup_lora_model(model_name, lora_r=16, lora_alpha=32, lora_dropout=0.05):
 
     # 모델 로드
     print("Loading base model...")
+    # GPU 0만 사용하도록 설정 (메모리 관리를 위해)
+    device_map = {"": 0} if device == "cuda" else None
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-        device_map="auto" if device == "cuda" else None,
+        device_map=device_map,
         token=os.getenv("HUGGINGFACE_TOKEN"),
         trust_remote_code=True
     )
@@ -251,11 +253,13 @@ def train_model(
         print(f"✓ MLflow run started: {run_name}")
 
     # Training arguments
+    # Gradient accumulation 조정: effective batch size 유지
+    gradient_accum_steps = max(1, 16 // batch_size)  # effective batch size = 16
     training_args = TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=num_epochs,
         per_device_train_batch_size=batch_size,
-        gradient_accumulation_steps=4,
+        gradient_accumulation_steps=gradient_accum_steps,
         learning_rate=learning_rate,
         fp16=torch.cuda.is_available(),
         logging_steps=10,
@@ -265,6 +269,9 @@ def train_model(
         push_to_hub=False,
         disable_tqdm=False
     )
+
+    print(f"  Gradient accumulation steps: {gradient_accum_steps}")
+    print(f"  Effective batch size: {batch_size * gradient_accum_steps}")
 
     print(f"Training configuration:")
     print(f"  Output dir: {output_dir}")
@@ -326,28 +333,48 @@ def train_model(
 
 def main():
     """메인 실행 함수"""
+    import sys
+
     print("\n" + "="*60)
     print("  Phase 2-3: LoRA Fine-tuning")
     print("="*60 + "\n")
 
     # 설정
     model_name = os.getenv("BASE_MODEL_NAME", "mistralai/Mistral-7B-Instruct-v0.2")
-    data_path = input("Training data path (default: data/synthetic_train.json): ").strip()
-    data_path = data_path if data_path else "data/synthetic_train.json"
 
-    # 하이퍼파라미터
-    print("\nHyperparameters (press Enter for defaults):")
-    num_epochs = input("  Epochs (default: 3): ").strip()
-    num_epochs = int(num_epochs) if num_epochs else 3
+    # 커맨드라인 인자 또는 환경변수에서 설정 로드
+    if len(sys.argv) > 1:
+        # Non-interactive mode: use command-line arguments
+        data_path = sys.argv[1] if len(sys.argv) > 1 else os.getenv("TRAIN_DATA_PATH", "data/synthetic_train.json")
+        num_epochs = int(sys.argv[2]) if len(sys.argv) > 2 else int(os.getenv("NUM_EPOCHS", 3))
+        batch_size = int(sys.argv[3]) if len(sys.argv) > 3 else int(os.getenv("BATCH_SIZE", 4))
+        learning_rate = float(sys.argv[4]) if len(sys.argv) > 4 else float(os.getenv("LEARNING_RATE", 2e-4))
+        lora_r = int(sys.argv[5]) if len(sys.argv) > 5 else int(os.getenv("LORA_RANK", 16))
 
-    batch_size = input("  Batch size (default: 4): ").strip()
-    batch_size = int(batch_size) if batch_size else 4
+        print(f"Configuration (from args/env):")
+        print(f"  Data path: {data_path}")
+        print(f"  Epochs: {num_epochs}")
+        print(f"  Batch size: {batch_size}")
+        print(f"  Learning rate: {learning_rate}")
+        print(f"  LoRA rank: {lora_r}")
+    else:
+        # Interactive mode: prompt user for input
+        data_path = input("Training data path (default: data/synthetic_train.json): ").strip()
+        data_path = data_path if data_path else "data/synthetic_train.json"
 
-    learning_rate = input("  Learning rate (default: 2e-4): ").strip()
-    learning_rate = float(learning_rate) if learning_rate else 2e-4
+        # 하이퍼파라미터
+        print("\nHyperparameters (press Enter for defaults):")
+        num_epochs = input("  Epochs (default: 3): ").strip()
+        num_epochs = int(num_epochs) if num_epochs else 3
 
-    lora_r = input("  LoRA rank (default: 16): ").strip()
-    lora_r = int(lora_r) if lora_r else 16
+        batch_size = input("  Batch size (default: 4): ").strip()
+        batch_size = int(batch_size) if batch_size else 4
+
+        learning_rate = input("  Learning rate (default: 2e-4): ").strip()
+        learning_rate = float(learning_rate) if learning_rate else 2e-4
+
+        lora_r = input("  LoRA rank (default: 16): ").strip()
+        lora_r = int(lora_r) if lora_r else 16
 
     try:
         # 1. 데이터 로드

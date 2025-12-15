@@ -1,0 +1,502 @@
+[
+  {
+    "instruction": "What is MLOps and why is it important?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is MLOps and why is it important?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain the MLOps lifecycle",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain the MLOps lifecycle\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the key components of an MLOps platform?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the key components of an MLOps platform?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Differences between DevOps and MLOps",
+    "input": "",
+    "output": "This is a placeholder answer for: Differences between DevOps and MLOps\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to version control machine learning models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to version control machine learning models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain model training pipeline best practices",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain model training pipeline best practices\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is experiment tracking in ML?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is experiment tracking in ML?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to handle data versioning in ML projects?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to handle data versioning in ML projects?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are different model deployment strategies?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are different model deployment strategies?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain A/B testing for ML models",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain A/B testing for ML models\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to implement canary deployments for models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to implement canary deployments for models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is model serving and inference optimization?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is model serving and inference optimization?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to monitor ML models in production?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to monitor ML models in production?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is model drift and how to detect it?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is model drift and how to detect it?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain data drift vs concept drift",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain data drift vs concept drift\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to set up alerts for model performance degradation?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to set up alerts for model performance degradation?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Compare MLflow, Weights & Biases, and Neptune",
+    "input": "",
+    "output": "This is a placeholder answer for: Compare MLflow, Weights & Biases, and Neptune\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to use DVC for data versioning?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to use DVC for data versioning?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain model registry and its importance",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain model registry and its importance\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is feature store and when to use it?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is feature store and when to use it?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to build a CI/CD pipeline for ML models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to build a CI/CD pipeline for ML models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain blue-green deployment for ML systems",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain blue-green deployment for ML systems\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the challenges in productionizing ML models?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the challenges in productionizing ML models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to handle model retraining in production?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to handle model retraining in production?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to fine-tune large language models efficiently?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to fine-tune large language models efficiently?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is LoRA and QLoRA?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is LoRA and QLoRA?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain prompt engineering best practices",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain prompt engineering best practices\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to optimize LLM inference speed?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to optimize LLM inference speed?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to optimize GPU memory usage during training?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to optimize GPU memory usage during training?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain mixed precision training",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain mixed precision training\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is gradient accumulation?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is gradient accumulation?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to implement efficient batch processing for LLMs?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to implement efficient batch processing for LLMs?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is MLOps and why is it important?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is MLOps and why is it important?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain the MLOps lifecycle",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain the MLOps lifecycle\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the key components of an MLOps platform?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the key components of an MLOps platform?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Differences between DevOps and MLOps",
+    "input": "",
+    "output": "This is a placeholder answer for: Differences between DevOps and MLOps\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to version control machine learning models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to version control machine learning models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain model training pipeline best practices",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain model training pipeline best practices\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is experiment tracking in ML?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is experiment tracking in ML?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to handle data versioning in ML projects?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to handle data versioning in ML projects?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are different model deployment strategies?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are different model deployment strategies?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain A/B testing for ML models",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain A/B testing for ML models\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to implement canary deployments for models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to implement canary deployments for models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is model serving and inference optimization?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is model serving and inference optimization?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to monitor ML models in production?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to monitor ML models in production?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is model drift and how to detect it?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is model drift and how to detect it?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain data drift vs concept drift",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain data drift vs concept drift\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to set up alerts for model performance degradation?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to set up alerts for model performance degradation?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Compare MLflow, Weights & Biases, and Neptune",
+    "input": "",
+    "output": "This is a placeholder answer for: Compare MLflow, Weights & Biases, and Neptune\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to use DVC for data versioning?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to use DVC for data versioning?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain model registry and its importance",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain model registry and its importance\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is feature store and when to use it?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is feature store and when to use it?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to build a CI/CD pipeline for ML models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to build a CI/CD pipeline for ML models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain blue-green deployment for ML systems",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain blue-green deployment for ML systems\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the challenges in productionizing ML models?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the challenges in productionizing ML models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to handle model retraining in production?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to handle model retraining in production?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to fine-tune large language models efficiently?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to fine-tune large language models efficiently?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is LoRA and QLoRA?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is LoRA and QLoRA?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain prompt engineering best practices",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain prompt engineering best practices\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to optimize LLM inference speed?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to optimize LLM inference speed?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to optimize GPU memory usage during training?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to optimize GPU memory usage during training?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain mixed precision training",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain mixed precision training\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is gradient accumulation?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is gradient accumulation?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to implement efficient batch processing for LLMs?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to implement efficient batch processing for LLMs?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is MLOps and why is it important?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is MLOps and why is it important?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain the MLOps lifecycle",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain the MLOps lifecycle\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the key components of an MLOps platform?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the key components of an MLOps platform?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Differences between DevOps and MLOps",
+    "input": "",
+    "output": "This is a placeholder answer for: Differences between DevOps and MLOps\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to version control machine learning models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to version control machine learning models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain model training pipeline best practices",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain model training pipeline best practices\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is experiment tracking in ML?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is experiment tracking in ML?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to handle data versioning in ML projects?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to handle data versioning in ML projects?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are different model deployment strategies?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are different model deployment strategies?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain A/B testing for ML models",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain A/B testing for ML models\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to implement canary deployments for models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to implement canary deployments for models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is model serving and inference optimization?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is model serving and inference optimization?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to monitor ML models in production?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to monitor ML models in production?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is model drift and how to detect it?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is model drift and how to detect it?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain data drift vs concept drift",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain data drift vs concept drift\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to set up alerts for model performance degradation?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to set up alerts for model performance degradation?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Compare MLflow, Weights & Biases, and Neptune",
+    "input": "",
+    "output": "This is a placeholder answer for: Compare MLflow, Weights & Biases, and Neptune\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to use DVC for data versioning?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to use DVC for data versioning?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain model registry and its importance",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain model registry and its importance\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is feature store and when to use it?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is feature store and when to use it?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to build a CI/CD pipeline for ML models?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to build a CI/CD pipeline for ML models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain blue-green deployment for ML systems",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain blue-green deployment for ML systems\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the challenges in productionizing ML models?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the challenges in productionizing ML models?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to handle model retraining in production?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to handle model retraining in production?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to fine-tune large language models efficiently?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to fine-tune large language models efficiently?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is LoRA and QLoRA?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is LoRA and QLoRA?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain prompt engineering best practices",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain prompt engineering best practices\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to optimize LLM inference speed?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to optimize LLM inference speed?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to optimize GPU memory usage during training?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to optimize GPU memory usage during training?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain mixed precision training",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain mixed precision training\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is gradient accumulation?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is gradient accumulation?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "How to implement efficient batch processing for LLMs?",
+    "input": "",
+    "output": "This is a placeholder answer for: How to implement efficient batch processing for LLMs?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What is MLOps and why is it important?",
+    "input": "",
+    "output": "This is a placeholder answer for: What is MLOps and why is it important?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Explain the MLOps lifecycle",
+    "input": "",
+    "output": "This is a placeholder answer for: Explain the MLOps lifecycle\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "What are the key components of an MLOps platform?",
+    "input": "",
+    "output": "This is a placeholder answer for: What are the key components of an MLOps platform?\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  },
+  {
+    "instruction": "Differences between DevOps and MLOps",
+    "input": "",
+    "output": "This is a placeholder answer for: Differences between DevOps and MLOps\n\nPlease enable OpenAI API to generate real answers, or manually add answers to this dataset."
+  }
+]

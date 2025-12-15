@@ -12,7 +12,7 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 ## 기술 스택
 
 ### Core ML
-- **Base Model**: **LLaMA-3-70B-Instruct** (현재) / Mistral-7B-Instruct / LLaMA-2-7B
+- **Base Model**: **LLaMA-3-8B-Instruct** (현재) / Mistral-7B-Instruct / LLaMA-2-7B
 - **Fine-tuning**: LoRA, QLoRA (PEFT)
 - **Framework**: PyTorch, Transformers, Accelerate
 - **Hardware**: RTX 5090 (31GB) + RTX 5060 Ti (15GB)
