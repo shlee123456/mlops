@@ -4,9 +4,10 @@ LLM Fine-tuning → 프로덕션 배포 MLOps 파이프라인
 
 ## 현재 상태
 
-- **Phase**: 2 (Fine-tuning 진행 중)
+- **Phase**: 2 (Fine-tuning 완료)
 - **베이스 모델**: LLaMA-3-8B-Instruct
 - **GPU**: RTX 5090 (31GB) + RTX 5060 Ti (15GB)
+- **배포된 모델**: [2shlee/llama3-8b-ko-chat-v1](https://huggingface.co/2shlee/llama3-8b-ko-chat-v1)
 
 ## 기술 스택
 
@@ -27,11 +28,19 @@ src/
 ├── data/        → src/data/CLAUDE.md
 ├── evaluate/    → src/evaluate/CLAUDE.md
 ├── deploy/      → src/deploy/CLAUDE.md   # HF Hub 업로드
-└── utils/       → src/utils/CLAUDE.md
+├── utils/       → src/utils/CLAUDE.md
+├── check_gpu.py           # GPU 환경 확인
+├── 01_test_base_model.py  # 베이스 모델 추론 테스트
+├── 02_gradio_demo.py      # Gradio 데모 UI
+└── 03_benchmark.py        # 성능 벤치마크
 deployment/      → deployment/CLAUDE.md
-models/base/          # HuggingFace 캐시
-models/fine-tuned/    # LoRA 어댑터 저장
-data/                 # 학습 데이터
+models/
+├── base/             # HuggingFace 캐시
+├── fine-tuned/       # LoRA 어댑터 저장
+└── downloaded/       # HF Hub에서 다운로드한 모델
+data/
+├── processed/        # JSONL 형식 (no_robots: 9,499건)
+└── synthetic_train.json  # MLOps/DevOps 특화 합성 데이터
 results/              # 실험 결과
 mlruns/               # MLflow 실험 저장소
 logs/                 # 구조화된 로그 (JSON)
@@ -74,16 +83,26 @@ LOG_LEVEL                # 로그 레벨 (기본: INFO)
 ```bash
 source venv/bin/activate          # 가상환경
 
-# 로컬 실행
-python src/check_gpu.py           # GPU 확인
+# GPU 및 환경 확인
+python src/check_gpu.py
+
+# 학습
 python src/train/01_lora_finetune.py
-python src/serve/01_vllm_server.py
+python src/train/02_qlora_finetune.py
 mlflow ui --port 5000
+
+# 서빙
+python src/serve/01_vllm_server.py
+python src/02_gradio_demo.py
 
 # HuggingFace Hub 업로드
 python src/deploy/01_upload_to_hub.py \
-    --adapter-path models/fine-tuned/lora-mistral-custom \
+    --adapter-path models/fine-tuned/lora-mistral-custom/checkpoint-1188 \
     --repo-name llama3-8b-ko-chat-v1 --public
+
+# HuggingFace Hub 다운로드 & 테스트
+python src/deploy/02_download_from_hub.py \
+    --repo-id 2shlee/llama3-8b-ko-chat-v1 --test
 
 # Docker (전체 스택)
 docker-compose up -d

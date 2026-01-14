@@ -52,8 +52,10 @@ data/processed/*
 # Models (large files)
 models/base/*
 models/fine-tuned/*
+models/downloaded/*
 !models/base/.gitkeep
 !models/fine-tuned/.gitkeep
+!models/downloaded/.gitkeep
 *.bin
 *.safetensors
 *.pt
