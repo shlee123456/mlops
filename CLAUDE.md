@@ -7,6 +7,7 @@ LLM Fine-tuning → 프로덕션 배포 MLOps 파이프라인
 - **Phase**: 2 (Fine-tuning 진행 중)
 - **베이스 모델**: LLaMA-3-8B-Instruct
 - **GPU**: RTX 5090 (31GB) + RTX 5060 Ti (15GB)
+- **리팩토링**: 클린 아키텍처 적용 예정 → `docs/plans/clean-architecture-refactoring.md`
 
 ## 기술 스택
 
@@ -17,18 +18,28 @@ LLM Fine-tuning → 프로덕션 배포 MLOps 파이프라인
 | MLOps | MLflow, DVC, LangChain |
 | Monitoring | Prometheus, Grafana, Loki, structlog |
 | DevOps | Docker, Docker Compose |
+| Database | SQLAlchemy 2.0+, Alembic (마이그레이션), SQLite |
+| Config | pydantic-settings |
 
 ## 디렉토리 구조
 
 ```
 src/
 ├── train/       → src/train/CLAUDE.md
-├── serve/       → src/serve/CLAUDE.md
+├── serve/       → src/serve/CLAUDE.md (클린 아키텍처 적용)
+│   ├── main.py              # FastAPI 엔트리포인트
+│   ├── database.py          # SQLAlchemy 설정
+│   ├── core/                # 설정, LLM 클라이언트
+│   ├── models/              # ORM 모델
+│   ├── schemas/             # Pydantic 스키마
+│   ├── cruds/               # DB CRUD 함수
+│   └── routers/             # API 라우터
 ├── data/        → src/data/CLAUDE.md
 ├── evaluate/    → src/evaluate/CLAUDE.md
-├── deploy/      → src/deploy/CLAUDE.md   # HF Hub 업로드
 └── utils/       → src/utils/CLAUDE.md
 deployment/      → deployment/CLAUDE.md
+db/                   # Alembic 마이그레이션
+docs/plans/           # 리팩토링 계획 문서
 models/base/          # HuggingFace 캐시
 models/fine-tuned/    # LoRA 어댑터 저장
 data/                 # 학습 데이터
@@ -51,6 +62,11 @@ VLLM_ENDPOINT            # vLLM 서버 (기본: http://localhost:8000)
 GPU_MEMORY_UTILIZATION   # GPU 메모리 사용률 (기본: 0.9)
 MAX_MODEL_LEN            # 최대 시퀀스 (기본: 4096)
 MODEL_PATH               # 모델 경로
+API_KEY                  # API 인증 키 (기본: your-secret-api-key)
+ENABLE_AUTH              # 인증 활성화 (기본: false)
+
+# 데이터베이스
+DATABASE_URL             # DB 연결 (기본: sqlite:///./data/chat.db)
 
 # 로깅
 LOG_DIR                  # 로그 디렉토리 (기본: ./logs)
@@ -77,13 +93,13 @@ source venv/bin/activate          # 가상환경
 # 로컬 실행
 python src/check_gpu.py           # GPU 확인
 python src/train/01_lora_finetune.py
-python src/serve/01_vllm_server.py
+python src/serve/main.py          # FastAPI 서버 (클린 아키텍처)
 mlflow ui --port 5000
 
-# HuggingFace Hub 업로드
-python src/deploy/01_upload_to_hub.py \
-    --adapter-path models/fine-tuned/lora-mistral-custom \
-    --repo-name llama3-8b-ko-chat-v1 --public
+# DB 마이그레이션 (Alembic)
+cd db
+alembic revision --autogenerate -m "설명"  # 마이그레이션 생성
+alembic upgrade head                        # 최신 버전 적용
 
 # Docker (전체 스택)
 docker-compose up -d
