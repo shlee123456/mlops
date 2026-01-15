@@ -10,7 +10,7 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 
 ## 프로젝트 목표
 
-1. **LLM Fine-tuning 실무 경험**: LoRA/QLoRA를 활용한 효율적 학습
+1. **LLM Fine-tuning**: LoRA/QLoRA를 활용한 효율적 학습
 2. **고성능 서빙**: vLLM을 이용한 최적화된 추론
 3. **End-to-End MLOps**: 데이터 수집 → 학습 → 배포 → 모니터링
 4. **프로덕션 환경 구축**: FastAPI + Docker + CI/CD
