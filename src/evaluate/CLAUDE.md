@@ -1,5 +1,7 @@
 # src/evaluate/ - 모델 평가
 
+> **상위 문서**: [루트 CLAUDE.md](../../CLAUDE.md) 참조
+
 Fine-tuned 모델 성능 분석 및 비교
 
 ## 파일

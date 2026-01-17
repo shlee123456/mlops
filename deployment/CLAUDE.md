@@ -1,5 +1,7 @@
 # deployment/ - 배포 및 모니터링
 
+> **상위 문서**: [루트 CLAUDE.md](../CLAUDE.md) 참조
+
 Docker 컨테이너화 + 모니터링 스택
 
 ## 구조

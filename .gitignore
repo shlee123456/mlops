@@ -72,7 +72,8 @@ mlartifacts/
 
 # Logs
 *.log
-logs/
+logs/**/*.log
+!logs/**/.gitkeep
 wandb/
 
 # Testing

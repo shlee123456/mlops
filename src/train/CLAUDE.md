@@ -1,5 +1,7 @@
 # src/train/ - 학습 파이프라인
 
+> **상위 문서**: [루트 CLAUDE.md](../../CLAUDE.md) 참조
+
 PEFT(LoRA/QLoRA)를 활용한 LLM Fine-tuning
 
 ## 파일

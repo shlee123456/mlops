@@ -1,81 +1,117 @@
 # src/serve/ - 서빙 파이프라인
 
-vLLM 기반 고성능 추론 + FastAPI 래퍼
+> **상위 문서**: [루트 CLAUDE.md](../../CLAUDE.md) 참조
 
-## 파일
+vLLM 기반 고성능 추론 + FastAPI 클린 아키텍처
 
-| 파일 | 설명 |
+## 서브 CLAUDE.md
+
+| 경로 | 설명 |
 |------|------|
-| `01_vllm_server.py` | vLLM OpenAI 호환 서버 |
-| `02_vllm_client.py` | VLLMClient 클래스 |
-| `03_gradio_vllm_demo.py` | Gradio UI |
-| `04_fastapi_server.py` | FastAPI 래퍼 (인증, 로깅) |
-| `05_prompt_templates.py` | 프롬프트 템플릿 |
-| `06_benchmark_vllm.py` | 벤치마크 |
-| `07_langchain_pipeline.py` | LangChain 통합 |
+| [migrations/CLAUDE.md](migrations/CLAUDE.md) | Alembic DB 마이그레이션 |
 
-## 실행 순서
+## 아키텍처 구조
+
+```
+src/serve/
+├── main.py              # FastAPI 엔트리포인트
+├── database.py          # SQLAlchemy 비동기 엔진/세션
+├── core/
+│   ├── config.py        # pydantic-settings 환경설정
+│   └── llm.py           # vLLM 클라이언트 래퍼
+├── models/
+│   └── chat.py          # ORM 모델 (Conversation, ChatMessage, LLMConfig)
+├── schemas/
+│   └── chat.py          # Pydantic 스키마
+├── cruds/
+│   └── chat.py          # CRUD 함수
+├── routers/
+│   ├── router.py        # 라우터 통합
+│   ├── chat.py          # 채팅 API 엔드포인트
+│   └── dependency.py    # 의존성 주입
+└── migrations/          # Alembic 마이그레이션
+```
+
+## 실행 방법
 
 ```bash
-# 1. vLLM 서버 먼저
+# 클린 아키텍처 서버 (권장)
+python -m src.serve.main    # :8080
+
+# 또는 vLLM 서버 직접 실행
 python src/serve/01_vllm_server.py  # :8000
-
-# 2. FastAPI 래퍼 (vLLM 필요)
-python src/serve/04_fastapi_server.py  # :8080
-
-# 또는 Docker
-docker-compose up vllm-server fastapi-server
 ```
 
 ## API 엔드포인트
 
-| 서비스 | 포트 | 엔드포인트 |
-|--------|------|------------|
-| vLLM | 8000 | `POST /v1/chat/completions`, `/v1/completions` |
-| FastAPI | 8080 | 위 + `GET /health`, `/metrics` |
+| 메서드 | 경로 | 설명 |
+|--------|------|------|
+| GET | `/` | 서버 정보 |
+| GET | `/health` | 헬스 체크 |
+| GET | `/v1/models` | 모델 목록 |
+| POST | `/v1/chat/completions` | 채팅 완성 (OpenAI 호환) |
+| GET | `/v1/conversations` | 대화 목록 |
+| POST | `/v1/conversations` | 대화 생성 |
+| GET | `/v1/conversations/{id}` | 대화 상세 |
+| DELETE | `/v1/conversations/{id}` | 대화 삭제 |
+| GET | `/v1/llm-configs` | LLM 설정 목록 |
+| POST | `/v1/llm-configs` | LLM 설정 생성 |
 
-## VLLMClient 사용
+## 레거시 파일 (참조용)
+
+| 파일 | 설명 |
+|------|------|
+| `01_vllm_server.py` | vLLM OpenAI 호환 서버 |
+| `02_vllm_client.py` | VLLMClient 클래스 (동기) |
+| `03_gradio_vllm_demo.py` | Gradio UI |
+| `04_fastapi_server.py` | FastAPI 레거시 (단일 파일) |
+| `05_prompt_templates.py` | 프롬프트 템플릿 |
+| `06_benchmark_vllm.py` | 벤치마크 |
+| `07_langchain_pipeline.py` | LangChain 통합 |
+
+## 환경설정 (core/config.py)
 
 ```python
-from serve.vllm_client import VLLMClient
-# 또는
-from src.serve.vllm_client import VLLMClient
+from src.serve.core.config import settings
 
-client = VLLMClient(base_url="http://localhost:8000")
+settings.vllm_base_url      # vLLM 서버 URL
+settings.database_url       # DB 연결 문자열
+settings.enable_auth        # 인증 활성화 여부
+settings.api_key            # API 키
+settings.default_temperature  # 기본 온도
+```
 
-# 동기 호출
-response = client.chat(messages=[{"role": "user", "content": "Hello"}])
+## LLM 클라이언트 (core/llm.py)
+
+```python
+from src.serve.core.llm import LLMClient
+
+client = LLMClient()
+
+# 채팅 완성
+response = await client.chat_completion(
+    messages=[{"role": "user", "content": "Hello"}],
+    temperature=0.7,
+)
 
 # 스트리밍
-async for chunk in client.chat_stream(messages):
+async for chunk in client.chat_completion_stream(messages):
     print(chunk)
+
+# 종료 시
+await client.close()
 ```
 
-## Pydantic 모델
+## 의존성 주입 (routers/dependency.py)
 
 ```python
-class ChatCompletionRequest(BaseModel):
-    messages: List[Message] = Field(..., description="대화 메시지")
-    temperature: float = Field(0.7, ge=0.0, le=2.0)
-    max_tokens: int = Field(512, ge=1, le=4096)
-    stream: bool = Field(False)
-```
+from src.serve.routers.dependency import get_db, get_llm_client, verify_api_key
 
-## 스트리밍 (SSE)
-
-```python
-async def stream_generator():
-    async for chunk in client.chat_stream(messages):
-        yield f"data: {json.dumps(chunk)}\n\n"
-
-return StreamingResponse(stream_generator(), media_type="text/event-stream")
-```
-
-## vLLM 최적화 옵션
-
-```bash
---gpu-memory-utilization 0.9
---max-model-len 4096
---tensor-parallel-size 2      # 멀티 GPU
---quantization awq            # AWQ 양자화
+@router.post("/chat")
+async def chat(
+    db: AsyncSession = Depends(get_db),
+    llm: LLMClient = Depends(get_llm_client),
+    _: bool = Depends(verify_api_key),
+):
+    ...
 ```
