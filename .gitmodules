@@ -1,0 +1,3 @@
+[submodule "docs/guides"]
+	path = docs/guides
+	url = git@github.com:shlee123456/CLAUDE-DOCS.git
