@@ -80,7 +80,8 @@ src/
 deployment/      → deployment/CLAUDE.md
 tests/serve/          # API 테스트
 docs/
-├── guides/           # 참조 가이드 (LOGGING.md, VLLM.md, CLAUDE-GUIDE.md)
+├── guides/           # Git 서브모듈 (CLAUDE-DOCS 저장소)
+├── references/       # 참조 가이드 (LOGGING.md, VLLM.md)
 └── plans/            # 리팩토링 계획 문서
 models/
 ├── base/             # HuggingFace 캐시
@@ -152,6 +153,6 @@ docker-compose up -d
 
 ## 참고 문서
 
-- [CLAUDE.md 가이드라인](docs/guides/CLAUDE.md) - 문서 작성 규칙
-- [로깅 가이드](docs/guides/LOGGING.md) - 구조화된 로깅
-- [vLLM 가이드](docs/guides/VLLM.md) - vLLM 서빙
+- [CLAUDE.md 가이드라인](docs/guides/CLAUDE.md) - 문서 작성 규칙 (서브모듈)
+- [로깅 가이드](docs/references/LOGGING.md) - 구조화된 로깅
+- [vLLM 가이드](docs/references/VLLM.md) - vLLM 서빙
