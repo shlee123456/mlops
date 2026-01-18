@@ -134,11 +134,17 @@ docker-compose up -d
 
 | 변수 | 기본값 | 설명 |
 |------|--------|------|
-| `HUGGINGFACE_TOKEN` | - | Gated 모델 접근 (필수) |
-| `VLLM_BASE_URL` | http://localhost:8000/v1 | vLLM 서버 |
+| `DEBUG` | false | 디버그 모드 |
 | `FASTAPI_PORT` | 8080 | FastAPI 포트 |
-| `DATABASE_URL` | sqlite+aiosqlite:///./mlops_chat.db | DB |
+| `VLLM_BASE_URL` | http://localhost:8000/v1 | vLLM 서버 |
+| `DEFAULT_MODEL` | - | 기본 모델 (미설정 시 vLLM 기본값) |
+| `DATABASE_URL` | sqlite+aiosqlite:///./mlops_chat.db | DB 연결 |
 | `ENABLE_AUTH` | false | 인증 활성화 |
+| `API_KEY` | your-secret-api-key | API 키 (인증 시) |
+| `DEFAULT_TEMPERATURE` | 0.7 | LLM 온도 |
+| `DEFAULT_MAX_TOKENS` | 512 | 최대 토큰 |
+| `LOG_DIR` | ./logs/fastapi | 로그 디렉토리 |
+| `HUGGINGFACE_TOKEN` | - | Gated 모델 접근 |
 
 환경 파일: `cp env.example .env`
 
