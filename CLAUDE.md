@@ -12,6 +12,11 @@ LLM Fine-tuning → 프로덕션 배포 MLOps 파이프라인
 [명령어] 2>&1 | tee .context/terminal/[명령어]_$(date +%s).log
 ```
 
+**정리 정책**: 7일 이상 된 로그 파일 삭제
+```bash
+find .context/terminal/ -name "*.log" -mtime +7 -delete
+```
+
 ### 2. 서브 CLAUDE.md 관리
 - 새 디렉토리/모듈 생성 시 → 해당 디렉토리에 서브 CLAUDE.md 생성
 - 기존 구조 변경 시 → 관련 서브 CLAUDE.md 업데이트
