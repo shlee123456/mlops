@@ -29,7 +29,7 @@ request_id_var: ContextVar[str] = ContextVar("request_id", default="")
 # ============================================================
 
 def setup_logging(
-    log_dir: str = "./logs/fastapi",
+    log_dir: str = "/logs",  # Docker 볼륨 매핑과 일치 (./logs/fastapi:/logs)
     json_format: bool = True,
 ) -> None:
     """

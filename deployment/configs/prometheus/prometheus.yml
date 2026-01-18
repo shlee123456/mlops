@@ -48,13 +48,8 @@ scrape_configs:
       - source_labels: [container_label_com_docker_compose_project]
         target_label: project
 
-  # MLflow Server
-  - job_name: 'mlflow'
-    static_configs:
-      - targets: ['mlflow-server:5000']
-        labels:
-          service: 'mlflow'
-    metrics_path: '/metrics'
+  # MLflow Server - 메트릭 미노출 (기본 /metrics 엔드포인트 없음)
+  # 필요시 별도 exporter 추가 필요
 
   # vLLM Server - 모델 서빙 메트릭
   - job_name: 'vllm'
@@ -81,12 +76,8 @@ scrape_configs:
         labels:
           service: 'loki'
 
-  # PostgreSQL
-  - job_name: 'postgres'
-    static_configs:
-      - targets: ['postgres:5432']
-        labels:
-          service: 'postgres'
+  # PostgreSQL - 메트릭 미노출 (기본 /metrics 엔드포인트 없음)
+  # 필요시 postgres_exporter 컨테이너 추가 필요
 
   # MinIO
   - job_name: 'minio'

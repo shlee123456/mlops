@@ -4,6 +4,7 @@ datasources:
   # Prometheus datasource
   - name: Prometheus
     type: prometheus
+    uid: prometheus  # 대시보드에서 참조할 고정 uid
     access: proxy
     url: http://prometheus:9090
     isDefault: true
@@ -15,6 +16,7 @@ datasources:
   # Loki datasource for logs
   - name: Loki
     type: loki
+    uid: loki  # 대시보드에서 참조할 고정 uid
     access: proxy
     url: http://loki:3100
     editable: true
