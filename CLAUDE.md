@@ -48,7 +48,7 @@ find .context/terminal/ -name "*.log" -mtime +7 -delete
 | Core ML | PyTorch 2.1+, Transformers 4.35+, PEFT, bitsandbytes |
 | Serving | vLLM, FastAPI, Gradio |
 | MLOps | MLflow, DVC, LangChain |
-| Monitoring | Prometheus, Grafana, Loki, structlog |
+| Monitoring | Prometheus, Grafana, Alloy, Loki, structlog |
 | DevOps | Docker, Docker Compose |
 | Database | SQLAlchemy 2.0+, Alembic (마이그레이션), SQLite |
 | Config | pydantic-settings |
