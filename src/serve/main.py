@@ -8,8 +8,10 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 
 from src.serve.core.config import settings
+from src.serve.admin import create_admin
 from src.serve.core.metrics import PrometheusMiddleware
 from src.serve.core.logging import setup_logging, get_logger, RequestLoggingMiddleware
 from src.serve.database import init_db, close_db
@@ -70,6 +72,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Session 미들웨어 (SQLAdmin 인증에 필요)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.jwt_secret_key,
+    session_cookie="admin_session",
+)
+
+# SQLAdmin 마운트
+admin = create_admin(app)
+logger.info("Admin UI: /admin")
+
 # 라우터 등록
 app.include_router(router)
 
@@ -93,6 +106,7 @@ def main():
     print("\nAPI Documentation:")
     print(f"  Swagger UI: http://localhost:{settings.fastapi_port}/docs")
     print(f"  ReDoc: http://localhost:{settings.fastapi_port}/redoc")
+    print(f"  Admin UI: http://localhost:{settings.fastapi_port}/admin")
     
     print("\n" + "=" * 60 + "\n")
     

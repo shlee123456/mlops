@@ -21,14 +21,26 @@ find .context/terminal/ -name "*.log" -mtime +7 -delete
 - 새 디렉토리/모듈 생성 시 → 해당 디렉토리에 서브 CLAUDE.md 생성
 - 기존 구조 변경 시 → 관련 서브 CLAUDE.md 업데이트
 
-### 3. Git 커밋 규칙
+### 3. 브랜치 컨텍스트 참조
+- **브랜치별 작업 지침**: `.context/branch/[브랜치명].md` 파일 확인
+- 세션 시작 시 현재 브랜치에 해당하는 컨텍스트 파일이 있으면 반드시 참조
+- 브랜치 컨텍스트에는 작업 목표, 범위 제한, 금지 사항 등이 정의됨
+
+```bash
+# 브랜치 컨텍스트 파일 확인
+git branch --show-current  # 현재 브랜치 확인
+cat .context/branch/$(git branch --show-current | tr '/' '-').md  # 컨텍스트 확인
+```
+
+### 4. Git 커밋 규칙
 - 커밋 메시지는 **한글**로 작성
 - `Co-Authored-By` 태그 **사용 금지**
 - 형식: `<type>: <한글 설명>` (feat, fix, docs, refactor, test, chore)
 
-### 4. 작업 완료 체크리스트
+### 5. 작업 완료 체크리스트
 - [ ] 터미널 로그 저장했는가?
 - [ ] 서브 CLAUDE.md 업데이트 필요한가?
+- [ ] 브랜치 컨텍스트 범위 내에서 작업했는가?
 - [ ] 세션 히스토리 기록했는가?
 
 ---

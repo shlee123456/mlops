@@ -8,6 +8,7 @@ vLLM 기반 고성능 추론 + FastAPI 클린 아키텍처
 
 | 경로 | 설명 |
 |------|------|
+| [admin/CLAUDE.md](admin/CLAUDE.md) | SQLAdmin 관리자 인터페이스 |
 | [migrations/CLAUDE.md](migrations/CLAUDE.md) | Alembic DB 마이그레이션 |
 
 ## 아키텍처 구조
@@ -15,7 +16,11 @@ vLLM 기반 고성능 추론 + FastAPI 클린 아키텍처
 ```
 src/serve/
 ├── main.py              # FastAPI 엔트리포인트
-├── database.py          # SQLAlchemy 비동기 엔진/세션
+├── database.py          # SQLAlchemy 비동기/동기 엔진
+├── admin/               # SQLAdmin 관리자 인터페이스
+│   ├── __init__.py      # Admin 앱 생성
+│   ├── auth.py          # JWT 인증 백엔드
+│   └── views.py         # 모델 Admin 뷰
 ├── core/
 │   ├── config.py        # pydantic-settings 환경설정
 │   └── llm.py           # vLLM 클라이언트 래퍼
