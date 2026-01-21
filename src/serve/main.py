@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.serve.core.config import settings
+from src.serve.admin import create_admin
 from src.serve.core.metrics import PrometheusMiddleware
 from src.serve.core.logging import setup_logging, get_logger, RequestLoggingMiddleware
 from src.serve.database import init_db, close_db
@@ -70,6 +71,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Session 미들웨어는 SQLAdmin이 자체적으로 추가함 (AuthenticationBackend에서)
+
+# SQLAdmin 마운트
+admin = create_admin(app)
+logger.info("Admin UI: /admin")
+
 # 라우터 등록
 app.include_router(router)
 
@@ -93,6 +100,7 @@ def main():
     print("\nAPI Documentation:")
     print(f"  Swagger UI: http://localhost:{settings.fastapi_port}/docs")
     print(f"  ReDoc: http://localhost:{settings.fastapi_port}/redoc")
+    print(f"  Admin UI: http://localhost:{settings.fastapi_port}/admin")
     
     print("\n" + "=" * 60 + "\n")
     

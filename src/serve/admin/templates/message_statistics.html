@@ -1,0 +1,140 @@
+{% extends "sqladmin/layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-chart-line"></i> 메시지 통계
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Date Range Filter -->
+                    <form method="post" class="mb-4">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="start_date" class="form-label">시작 날짜</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date"
+                                       value="{{ start_date }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="end_date" class="form-label">종료 날짜</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date"
+                                       value="{{ end_date }}">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-filter"></i> 조회
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Summary Stats -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">총 메시지</h5>
+                                    <h2>{{ total_messages }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">총 대화</h5>
+                                    <h2>{{ total_conversations }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">평균 응답시간</h5>
+                                    <h2>{{ "%.0f"|format(avg_latency_ms) if avg_latency_ms else 0 }} ms</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-dark">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">평균 토큰</h5>
+                                    <h2>{{ "%.0f"|format(avg_tokens) if avg_tokens else 0 }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Role-based Stats -->
+                    <h4>역할별 통계</h4>
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>역할</th>
+                                <th>메시지 수</th>
+                                <th>평균 응답시간 (ms)</th>
+                                <th>평균 토큰 수</th>
+                                <th>총 토큰 수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in role_stats %}
+                            <tr>
+                                <td>
+                                    {% if stat.role == 'user' %}
+                                    <span class="badge bg-primary">{{ stat.role }}</span>
+                                    {% elif stat.role == 'assistant' %}
+                                    <span class="badge bg-success">{{ stat.role }}</span>
+                                    {% elif stat.role == 'system' %}
+                                    <span class="badge bg-secondary">{{ stat.role }}</span>
+                                    {% else %}
+                                    <span class="badge bg-dark">{{ stat.role }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ stat.count }}</td>
+                                <td>{{ "%.0f"|format(stat.avg_latency) if stat.avg_latency else '-' }}</td>
+                                <td>{{ "%.0f"|format(stat.avg_tokens) if stat.avg_tokens else '-' }}</td>
+                                <td>{{ stat.total_tokens if stat.total_tokens else '-' }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">데이터가 없습니다</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Daily Stats -->
+                    {% if daily_stats %}
+                    <h4 class="mt-4">일별 통계</h4>
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>날짜</th>
+                                <th>메시지 수</th>
+                                <th>평균 응답시간 (ms)</th>
+                                <th>평균 토큰 수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in daily_stats %}
+                            <tr>
+                                <td>{{ stat.date }}</td>
+                                <td>{{ stat.count }}</td>
+                                <td>{{ "%.0f"|format(stat.avg_latency) if stat.avg_latency else '-' }}</td>
+                                <td>{{ "%.0f"|format(stat.avg_tokens) if stat.avg_tokens else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
