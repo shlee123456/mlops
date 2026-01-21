@@ -58,7 +58,7 @@ cat .context/branch/$(git branch --show-current | tr '/' '-').md  # 컨텍스트
 | 분류 | 기술 |
 |------|------|
 | Core ML | PyTorch 2.1+, Transformers 4.35+, PEFT, bitsandbytes |
-| Serving | vLLM, FastAPI, Gradio |
+| Serving | vLLM, FastAPI, Gradio, SQLAdmin |
 | MLOps | MLflow, DVC, LangChain |
 | Monitoring | Prometheus, Grafana, Loki, structlog |
 | DevOps | Docker, Docker Compose |
@@ -70,6 +70,7 @@ cat .context/branch/$(git branch --show-current | tr '/' '-').md  # 컨텍스트
 | 경로 | 설명 |
 |------|------|
 | [src/serve/CLAUDE.md](src/serve/CLAUDE.md) | FastAPI 서빙 (클린 아키텍처) |
+| [src/serve/admin/CLAUDE.md](src/serve/admin/CLAUDE.md) | SQLAdmin 관리자 인터페이스 |
 | [src/serve/migrations/CLAUDE.md](src/serve/migrations/CLAUDE.md) | Alembic 마이그레이션 |
 | [src/train/CLAUDE.md](src/train/CLAUDE.md) | LoRA/QLoRA Fine-tuning |
 | [src/data/CLAUDE.md](src/data/CLAUDE.md) | 데이터 파이프라인 |
@@ -85,6 +86,7 @@ src/
 ├── serve/       → src/serve/CLAUDE.md (클린 아키텍처 적용)
 │   ├── main.py              # FastAPI 엔트리포인트
 │   ├── database.py          # SQLAlchemy 설정
+│   ├── admin/               # SQLAdmin 관리자 인터페이스
 │   ├── migrations/          # Alembic 마이그레이션
 │   ├── core/                # 설정, LLM 클라이언트
 │   ├── models/              # ORM 모델
@@ -157,6 +159,9 @@ docker-compose up -d
 | `DEFAULT_MAX_TOKENS` | 512 | 최대 토큰 |
 | `LOG_DIR` | ./logs/fastapi | 로그 디렉토리 |
 | `HUGGINGFACE_TOKEN` | - | Gated 모델 접근 |
+| `ADMIN_USERNAME` | admin | 관리자 ID |
+| `ADMIN_PASSWORD` | changeme | 관리자 비밀번호 |
+| `JWT_SECRET_KEY` | change-this-... | JWT 서명 키 |
 
 환경 파일: `cp env.example .env`
 
