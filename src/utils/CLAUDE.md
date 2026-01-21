@@ -2,7 +2,7 @@
 
 > **상위 문서**: [루트 CLAUDE.md](../../CLAUDE.md) 참조
 
-구조화된 로깅 및 GPU 모니터링
+구조화된 로깅, GPU 모니터링, 모델 다운로드
 
 ## 파일
 
@@ -10,7 +10,46 @@
 |------|------|
 | `logging_utils.py` | JSON 로깅 (structlog) |
 | `gpu_monitor.py` | GPU 메트릭 |
+| `download_model.py` | HuggingFace 모델 다운로드 |
 | `__init__.py` | 패키지 |
+
+## 모델 다운로드
+
+### 사용법
+
+```bash
+# 단일 모델 다운로드
+python -m src.utils.download_model meta-llama/Llama-3.1-8B-Instruct
+
+# 다운로드된 모델 목록 확인
+python -m src.utils.download_model --list
+
+# 모델 정보 조회
+python -m src.utils.download_model --info meta-llama/Llama-3.1-8B-Instruct
+
+# 설정 파일로 여러 모델 다운로드
+python -m src.utils.download_model --config models/model_list.yaml
+```
+
+### 환경변수
+
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `MODEL_CACHE_DIR` | models/downloaded | 모델 캐시 경로 |
+| `OFFLINE_MODE` | false | 오프라인 모드 |
+| `HUGGINGFACE_TOKEN` | - | Gated 모델 접근 토큰 |
+
+### 주요 함수
+
+```python
+from src.utils.download_model import download_model, check_model_exists
+
+# 모델 다운로드
+path = download_model("meta-llama/Llama-3.1-8B-Instruct")
+
+# 이미 존재하는지 확인
+exists = check_model_exists("meta-llama/Llama-3.1-8B-Instruct")
+```
 
 ## Import 경로
 

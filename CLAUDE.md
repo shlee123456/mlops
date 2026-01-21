@@ -123,6 +123,10 @@ cd /path/to/mlops-project  # mlops-project 환경 자동 적용
 # GPU 및 환경 확인
 python src/check_gpu.py
 
+# 모델 다운로드
+python -m src.utils.download_model meta-llama/Llama-3.1-8B-Instruct
+python -m src.utils.download_model --list  # 다운로드된 모델 목록
+
 # 학습
 python src/train/01_lora_finetune.py
 python src/train/02_qlora_finetune.py
@@ -159,6 +163,8 @@ docker-compose up -d
 | `DEFAULT_MAX_TOKENS` | 512 | 최대 토큰 |
 | `LOG_DIR` | ./logs/fastapi | 로그 디렉토리 |
 | `HUGGINGFACE_TOKEN` | - | Gated 모델 접근 |
+| `MODEL_CACHE_DIR` | models/downloaded | 모델 캐시 경로 |
+| `OFFLINE_MODE` | false | 오프라인 모드 |
 | `ADMIN_USERNAME` | admin | 관리자 ID |
 | `ADMIN_PASSWORD` | changeme | 관리자 비밀번호 |
 | `JWT_SECRET_KEY` | change-this-... | JWT 서명 키 |

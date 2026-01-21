@@ -163,12 +163,23 @@ def setup_lora_model(model_name, lora_r=16, lora_alpha=32, lora_dropout=0.05):
         device = "cpu"
         print("⚠ Using CPU (training will be slow)")
 
+    # 캐시 및 오프라인 모드 설정
+    cache_dir = os.getenv("MODEL_CACHE_DIR", None)
+    offline_mode = os.getenv("OFFLINE_MODE", "false").lower() == "true"
+    
+    if cache_dir:
+        print(f"  Model cache: {cache_dir}")
+    if offline_mode:
+        print("  Mode: Offline (local files only)")
+
     # Tokenizer 로드
     print("\nLoading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         token=os.getenv("HUGGINGFACE_TOKEN"),
-        trust_remote_code=True
+        trust_remote_code=True,
+        cache_dir=cache_dir,
+        local_files_only=offline_mode,
     )
 
     if tokenizer.pad_token is None:
@@ -184,7 +195,9 @@ def setup_lora_model(model_name, lora_r=16, lora_alpha=32, lora_dropout=0.05):
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         device_map=device_map,
         token=os.getenv("HUGGINGFACE_TOKEN"),
-        trust_remote_code=True
+        trust_remote_code=True,
+        cache_dir=cache_dir,
+        local_files_only=offline_mode,
     )
 
     if device != "cuda":

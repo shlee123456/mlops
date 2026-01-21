@@ -206,12 +206,23 @@ def setup_qlora_model(
 
     print(f"✓ Using GPU: {torch.cuda.get_device_name(0)}")
 
+    # 캐시 및 오프라인 모드 설정
+    cache_dir = os.getenv("MODEL_CACHE_DIR", None)
+    offline_mode = os.getenv("OFFLINE_MODE", "false").lower() == "true"
+    
+    if cache_dir:
+        print(f"  Model cache: {cache_dir}")
+    if offline_mode:
+        print("  Mode: Offline (local files only)")
+
     # Tokenizer 로드
     print("\nLoading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         token=os.getenv("HUGGINGFACE_TOKEN"),
-        trust_remote_code=True
+        trust_remote_code=True,
+        cache_dir=cache_dir,
+        local_files_only=offline_mode,
     )
 
     if tokenizer.pad_token is None:
@@ -234,7 +245,9 @@ def setup_qlora_model(
         quantization_config=bnb_config,
         device_map="auto",
         token=os.getenv("HUGGINGFACE_TOKEN"),
-        trust_remote_code=True
+        trust_remote_code=True,
+        cache_dir=cache_dir,
+        local_files_only=offline_mode,
     )
 
     # 메모리 사용량 출력
