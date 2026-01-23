@@ -1,0 +1,4 @@
+include:
+  - docker-compose.mlflow.yml
+  - docker-compose.serving.yml
+  - docker-compose.monitoring.yml

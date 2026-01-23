@@ -97,6 +97,11 @@ src/
 ├── evaluate/    → src/evaluate/CLAUDE.md
 └── utils/       → src/utils/CLAUDE.md
 deployment/      → deployment/CLAUDE.md
+├── mlflow/           # MLflow Dockerfile
+├── serving/          # vLLM, FastAPI Dockerfile
+├── monitoring/       # 모니터링 설정 파일
+└── train/            # 학습용 Dockerfile
+docker/               # Docker Compose 파일 (스택별 분리)
 tests/serve/          # API 테스트
 docs/
 ├── guides/           # Git 서브모듈 (CLAUDE-DOCS 저장소)
@@ -145,7 +150,12 @@ alembic revision --autogenerate -m "설명"  # 마이그레이션 생성
 alembic upgrade head                   # 적용
 
 # Docker (전체 스택)
-docker-compose up -d
+docker compose -f docker/docker-compose.yml up -d
+
+# Docker (개별 스택)
+docker compose -f docker/docker-compose.mlflow.yml up -d
+docker compose -f docker/docker-compose.serving.yml up -d
+docker compose -f docker/docker-compose.monitoring.yml up -d
 ```
 
 ## 환경변수

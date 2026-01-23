@@ -90,3 +90,6 @@ grafana_data/
 *.tmp
 *.bak
 .cache/
+
+# Sensitive files
+cookies.txt

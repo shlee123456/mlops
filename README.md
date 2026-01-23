@@ -4,9 +4,10 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 
 ## 현재 상태
 
-- **Phase**: 2 (Fine-tuning 진행 중)
+- **Phase**: 2 (Fine-tuning 완료)
 - **베이스 모델**: LLaMA-3-8B-Instruct
 - **GPU**: RTX 5090 (31GB) + RTX 5060 Ti (15GB)
+- **배포된 모델**: [2shlee/llama3-8b-ko-chat-v1](https://huggingface.co/2shlee/llama3-8b-ko-chat-v1)
 
 ## 프로젝트 목표
 
@@ -20,7 +21,7 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 | 분류 | 기술 |
 |------|------|
 | Core ML | PyTorch 2.1+, Transformers 4.35+, PEFT, bitsandbytes |
-| Serving | vLLM, FastAPI, Gradio |
+| Serving | vLLM, FastAPI, Gradio, SQLAdmin |
 | MLOps | MLflow, DVC, LangChain |
 | Monitoring | Prometheus, Grafana, Loki, structlog |
 | DevOps | Docker, Docker Compose |
@@ -31,31 +32,43 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 
 ```
 mlops-project/
+├── docker/                     # Docker Compose 파일들
+│   ├── docker-compose.yml          # 전체 스택 실행
+│   ├── docker-compose.mlflow.yml   # MLflow Stack
+│   ├── docker-compose.serving.yml  # Serving Stack
+│   ├── docker-compose.monitoring.yml # Monitoring Stack
+│   └── .env.example
+├── deployment/                 # 스택별 Dockerfile/Config
+│   ├── mlflow/                     # MLflow Dockerfile
+│   ├── serving/                    # vLLM, FastAPI Dockerfile
+│   ├── monitoring/                 # Prometheus, Grafana, Loki, Alloy configs
+│   └── train/                      # Training Dockerfile
 ├── src/
-│   ├── train/              # 학습 스크립트
-│   ├── serve/              # FastAPI 서빙 (클린 아키텍처)
-│   │   ├── main.py         # FastAPI 엔트리포인트
-│   │   ├── database.py     # SQLAlchemy 설정
-│   │   ├── core/           # 설정, LLM 클라이언트
-│   │   ├── models/         # ORM 모델
-│   │   ├── schemas/        # Pydantic 스키마
-│   │   ├── cruds/          # DB CRUD 함수
-│   │   └── routers/        # API 라우터
-│   ├── data/               # 데이터 파이프라인
-│   ├── evaluate/           # 평가 스크립트
-│   └── utils/              # 유틸리티 (로깅 등)
-├── deployment/             # Docker Compose 배포
-├── db/                     # Alembic 마이그레이션
+│   ├── train/                  # 학습 스크립트
+│   ├── serve/                  # FastAPI 서빙 (클린 아키텍처)
+│   │   ├── main.py                 # FastAPI 엔트리포인트
+│   │   ├── database.py             # SQLAlchemy 설정
+│   │   ├── admin/                  # SQLAdmin 관리자 인터페이스
+│   │   ├── migrations/             # Alembic 마이그레이션
+│   │   ├── core/                   # 설정, LLM 클라이언트
+│   │   ├── models/                 # ORM 모델
+│   │   ├── schemas/                # Pydantic 스키마
+│   │   ├── cruds/                  # DB CRUD 함수
+│   │   └── routers/                # API 라우터
+│   ├── data/                   # 데이터 파이프라인
+│   ├── evaluate/               # 평가 스크립트
+│   └── utils/                  # 유틸리티 (로깅 등)
 ├── docs/
-│   ├── guides/             # 참조 가이드 (LOGGING.md, VLLM.md)
-│   └── plans/              # 리팩토링 계획 문서
+│   ├── references/             # 참조 가이드 (LOGGING.md, VLLM.md)
+│   └── plans/                  # 리팩토링 계획 문서
 ├── models/
-│   ├── base/               # HuggingFace 캐시
-│   └── fine-tuned/         # LoRA 어댑터 저장
-├── data/                   # 학습 데이터
-├── results/                # 실험 결과
-├── mlruns/                 # MLflow 실험 저장소
-├── logs/                   # 구조화된 로그 (JSON)
+│   ├── base/                   # HuggingFace 캐시
+│   ├── downloaded/             # HF Hub에서 다운로드한 모델
+│   └── fine-tuned/             # LoRA 어댑터 저장
+├── data/                       # 학습 데이터
+├── results/                    # 실험 결과
+├── mlruns/                     # MLflow 실험 저장소
+├── logs/                       # 구조화된 로그 (JSON)
 ├── requirements.txt
 └── README.md
 ```

@@ -2,23 +2,38 @@
 
 > **상위 문서**: [루트 CLAUDE.md](../CLAUDE.md) 참조
 
-Docker 컨테이너화 + 모니터링 스택
+Docker 컨테이너화 + 모니터링 스택 (스택별 분리)
 
 ## 구조
 
 ```
 deployment/
-├── docker/
-│   ├── Dockerfile.fastapi
-│   ├── Dockerfile.mlflow
-│   ├── Dockerfile.serve     # vLLM
-│   └── Dockerfile.train
-└── configs/
-    ├── prometheus/prometheus.yml
-    ├── grafana/dashboards/
-    ├── loki/loki-config.yaml
-    ├── alloy/config.alloy       # 통합 에이전트 (logs + metrics)
-    └── promtail/                # (deprecated - alloy로 대체)
+├── mlflow/
+│   └── Dockerfile              # MLflow 서버
+├── serving/
+│   ├── Dockerfile.vllm         # vLLM GPU 서빙
+│   └── Dockerfile.fastapi      # FastAPI 게이트웨이
+├── train/
+│   └── Dockerfile              # 학습용
+└── monitoring/
+    └── configs/
+        ├── alloy/config.alloy       # 통합 에이전트 (logs + metrics)
+        ├── grafana/dashboards/      # 대시보드 JSON
+        ├── grafana/provisioning/    # 데이터소스/대시보드 설정
+        ├── loki/loki-config.yaml
+        ├── prometheus/prometheus.yml
+        └── promtail/                # (deprecated - alloy로 대체)
+```
+
+## Docker Compose 파일 (docker/ 디렉토리)
+
+```
+docker/
+├── docker-compose.yml              # 전체 스택 (include)
+├── docker-compose.mlflow.yml       # MLflow Stack
+├── docker-compose.serving.yml      # Serving Stack
+├── docker-compose.monitoring.yml   # Monitoring Stack
+└── .env.example                    # 환경변수 템플릿
 ```
 
 ## 서비스 포트
@@ -36,20 +51,25 @@ deployment/
 | 9001 | MinIO Console | minio/minio123 |
 | 5432 | PostgreSQL | mlflow/mlflow |
 
-## 실행 (docker-compose.yml은 프로젝트 루트에 위치)
+## 실행
 
 ```bash
 # 전체 스택
-docker-compose up -d
+docker compose -f docker/docker-compose.yml up -d
 
-# 특정 서비스
-docker-compose up -d mlflow-server grafana
+# 개별 스택 실행
+docker compose -f docker/docker-compose.mlflow.yml up -d
+docker compose -f docker/docker-compose.serving.yml up -d
+docker compose -f docker/docker-compose.monitoring.yml up -d
+
+# 스택 조합 실행
+docker compose -f docker/docker-compose.mlflow.yml -f docker/docker-compose.serving.yml up -d
 
 # 로그 확인
-docker-compose logs -f vllm-server
+docker compose -f docker/docker-compose.serving.yml logs -f vllm-server
 
 # 중지
-docker-compose down
+docker compose -f docker/docker-compose.yml down
 ```
 
 ## 서비스 그룹
@@ -57,8 +77,7 @@ docker-compose down
 ```
 MLflow Stack    : postgres, minio, mlflow-server
 Model Serving   : vllm-server, fastapi-server
-Monitoring      : prometheus, grafana, alloy
-Logging         : loki (alloy가 로그 수집)
+Monitoring      : loki, prometheus, grafana, alloy
 ```
 
 > **Note**: Alloy가 node-exporter, cadvisor, promtail 기능을 통합
