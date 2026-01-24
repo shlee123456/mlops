@@ -68,6 +68,13 @@
               }
             }
           ],
+          "links": [
+            {
+              "title": "Inference Metrics 상세 보기",
+              "url": "/d/inference-metrics?from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ],
           "thresholds": {
             "steps": [
               {
@@ -128,6 +135,13 @@
               }
             }
           ],
+          "links": [
+            {
+              "title": "Inference Detail 상세 보기",
+              "url": "/d/inference-detail?from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ],
           "thresholds": {
             "steps": [
               {
@@ -186,6 +200,13 @@
                   "color": "red"
                 }
               }
+            }
+          ],
+          "links": [
+            {
+              "title": "Training Metrics 상세 보기",
+              "url": "/d/training-metrics?from=${__from}&to=${__to}",
+              "targetBlank": false
             }
           ],
           "thresholds": {
@@ -653,7 +674,14 @@
           "min": 0,
           "color": {
             "mode": "palette-classic"
-          }
+          },
+          "links": [
+            {
+              "title": "Inference Metrics 상세 보기",
+              "url": "/d/inference-metrics?from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ]
         }
       }
     },
@@ -689,7 +717,14 @@
           "min": 0,
           "color": {
             "mode": "palette-classic"
-          }
+          },
+          "links": [
+            {
+              "title": "Inference Metrics 상세 보기",
+              "url": "/d/inference-metrics?from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ]
         }
       }
     }

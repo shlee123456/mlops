@@ -1,5 +1,6 @@
 {
   "title": "Training Metrics",
+  "uid": "training-metrics",
   "tags": [
     "mlops",
     "training"
