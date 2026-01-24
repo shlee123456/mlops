@@ -8,6 +8,9 @@ Started: Sat Jan 25 00:00:00 KST 2026
 - `type: textbox` 변수는 자유 입력, `type: custom`은 쉼표 구분 query 값에서 선택
 - Training/System 로그는 별도 job 라벨 사용 ({job="training"}, {job="system"}) - endpoint/model 필터 불필요
 - jq . 명령으로 JSON 유효성 검증 가능
+- `type: query` 변수에 `label_values(metric, label)` 사용하여 동적으로 값 로딩 가능
+- 드릴다운 대상 대시보드의 변수에 `includeAll: true, allValue: ".*"` 설정하면 미선택 시 전체 매칭
+- 에러 로그 패널에서 `fieldConfig.defaults.links`로 다른 대시보드 드릴다운 링크 추가 가능
 
 ---
 
@@ -21,4 +24,19 @@ Started: Sat Jan 25 00:00:00 KST 2026
   - `${varname:-.+}` 패턴으로 빈 변수일 때 전체 매칭 가능
   - Training/System 로그는 구조화된 JSON이 아닐 수 있으므로 | json 파이프라인 적용 주의
   - Log Level Distribution 패널도 필터링 적용 시 일관된 뷰 제공
+---
+
+## 2026-01-25 - US-002
+- inference-detail.json 상세 대시보드 생성 (uid: inference-detail)
+- $endpoint 변수 (query: label_values(http_requests_total, endpoint))
+- $model 변수 (query: label_values(llm_requests_total, model))
+- 10개 패널 구현: 시간대별 요청수, p50/p95/p99 레이턴시, 에러율 시계열, 모델별 성능 비교, 성공률(gauge), 평균 레이턴시(stat), 총 요청수(stat), 토큰 생성률(stat), 최근 에러 로그(loki), 상태 코드 분포(piechart)
+- 에러 로그 패널에 logs-dashboard로의 드릴다운 링크 추가
+- 모든 Prometheus 쿼리에 endpoint/model 필터 적용
+- Files changed: deployment/monitoring/configs/grafana/dashboards/inference-detail.json
+- **Learnings for future iterations:**
+  - `type: query` 변수에 `refresh: 2` 설정 시 대시보드 로딩/시간 범위 변경 시 자동 갱신
+  - `allValue: ".*"` 설정으로 All 선택 시 정규식 전체 매칭
+  - 로그 패널의 fieldConfig.defaults.links로 드릴다운 링크 연결 가능
+  - 에러율 시계열은 4xx/5xx를 분리하면 더 정확한 원인 파악 가능
 ---
