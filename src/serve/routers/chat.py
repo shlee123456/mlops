@@ -23,6 +23,7 @@ from src.serve.schemas.chat import (
     ConversationListResponse,
     MessageResponse,
     LLMConfigCreate,
+    LLMConfigUpdate,
     LLMConfigResponse,
     UsageResponse,
 )
@@ -307,3 +308,44 @@ async def get_llm_config(
             detail="LLM config not found",
         )
     return config
+
+
+@router.put(
+    "/llm-configs/{config_id}",
+    response_model=LLMConfigResponse,
+    summary="LLM 설정 수정",
+)
+async def update_llm_config(
+    config_id: int,
+    request: LLMConfigUpdate,
+    db: AsyncSession = Depends(get_db),
+    _: bool = Depends(verify_api_key),
+):
+    """LLM 설정 부분 수정"""
+    update_data = request.model_dump(exclude_unset=True)
+    config = await crud.update_llm_config(db, config_id, **update_data)
+    if not config:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="LLM config not found",
+        )
+    return config
+
+
+@router.delete(
+    "/llm-configs/{config_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="LLM 설정 삭제",
+)
+async def delete_llm_config(
+    config_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: bool = Depends(verify_api_key),
+):
+    """LLM 설정 삭제 (참조 Conversation은 llm_config_id NULL 처리)"""
+    deleted = await crud.delete_llm_config(db, config_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="LLM config not found",
+        )

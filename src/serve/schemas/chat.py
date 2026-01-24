@@ -120,6 +120,17 @@ class LLMConfigCreate(BaseModel):
     is_default: bool = Field(False, description="기본값 여부")
 
 
+class LLMConfigUpdate(BaseModel):
+    """LLM 설정 수정 요청 (부분 업데이트)"""
+    name: Optional[str] = Field(None, description="설정 이름")
+    model_name: Optional[str] = Field(None, description="모델 이름")
+    system_prompt: Optional[str] = Field(None, description="시스템 프롬프트")
+    temperature: Optional[float] = Field(None, ge=0.0, le=2.0)
+    max_tokens: Optional[int] = Field(None, ge=1, le=4096)
+    top_p: Optional[float] = Field(None, ge=0.0, le=1.0)
+    is_default: Optional[bool] = Field(None, description="기본값 여부")
+
+
 class LLMConfigResponse(BaseModel):
     """LLM 설정 응답"""
     id: int

@@ -199,6 +199,49 @@ async def get_default_llm_config(
     return result.scalar_one_or_none()
 
 
+async def update_llm_config(
+    db: AsyncSession,
+    config_id: int,
+    **kwargs,
+) -> Optional[LLMConfig]:
+    """LLM 설정 부분 업데이트"""
+    config = await get_llm_config(db, config_id)
+    if not config:
+        return None
+
+    # is_default=True 설정 시 기존 기본값 해제
+    if kwargs.get("is_default") is True:
+        await _clear_default_llm_config(db)
+
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(config, key, value)
+
+    await db.flush()
+    await db.refresh(config)
+    return config
+
+
+async def delete_llm_config(
+    db: AsyncSession,
+    config_id: int,
+) -> bool:
+    """LLM 설정 삭제 (참조 Conversation의 llm_config_id NULL 처리)"""
+    config = await get_llm_config(db, config_id)
+    if not config:
+        return False
+
+    # 참조하는 Conversation의 llm_config_id를 NULL로 설정
+    result = await db.execute(
+        select(Conversation).where(Conversation.llm_config_id == config_id)
+    )
+    for conversation in result.scalars().all():
+        conversation.llm_config_id = None
+
+    await db.delete(config)
+    return True
+
+
 async def _clear_default_llm_config(db: AsyncSession) -> None:
     """기존 기본값 해제"""
     result = await db.execute(
