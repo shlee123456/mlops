@@ -23,7 +23,7 @@ GPU 자원을 활용한 커스텀 챗봇 구축 프로젝트입니다. LLM Fine-
 | Core ML | PyTorch 2.1+, Transformers 4.35+, PEFT, bitsandbytes |
 | Serving | vLLM, FastAPI, Gradio, SQLAdmin |
 | MLOps | MLflow, DVC, LangChain |
-| Monitoring | Prometheus, Grafana, Loki, structlog |
+| Monitoring | Prometheus, Grafana, Alloy, Loki, structlog |
 | DevOps | Docker, Docker Compose |
 | Database | SQLAlchemy 2.0+, Alembic (마이그레이션), SQLite |
 | Config | pydantic-settings |
@@ -72,6 +72,33 @@ mlops-project/
 ├── requirements.txt
 └── README.md
 ```
+
+## 배포 및 모니터링
+
+이 프로젝트는 Docker Compose 기반의 완전한 MLOps 스택을 제공합니다:
+
+### 서비스 구성
+- **MLflow Stack**: MLflow 서버 + PostgreSQL + MinIO
+- **Serving Stack**: vLLM GPU 서버 + FastAPI 게이트웨이
+- **Monitoring Stack**: Prometheus + Grafana + Loki + Alloy
+
+### 로깅 시스템
+구조화된 JSON 로깅으로 다음을 추적합니다:
+- **Training Logs**: epoch, step, loss, learning_rate, gpu_memory
+- **Inference Logs**: latency, tokens_generated, throughput
+- **System Logs**: gpu_utilization, memory_usage, temperature
+- **API Logs**: http_method, status_code, response_time
+
+### Grafana 대시보드
+사전 구성된 6개의 대시보드:
+1. **System Overview** - GPU/CPU/메모리 모니터링
+2. **Training Metrics** - 학습 진행률 및 Loss 추적
+3. **Inference Metrics** - QPS, 레이턴시, 처리량
+4. **Training Detail** - 실험별 상세 분석 (드릴다운)
+5. **Inference Detail** - 엔드포인트/모델별 분석 (드릴다운)
+6. **Logs Dashboard** - 통합 로그 뷰어 (LogQL)
+
+> 📖 **전체 배포 가이드**: [deployment/README.md](deployment/README.md)에서 설치, 설정, 백업, 성능 튜닝, 트러블슈팅 등 상세 내용을 확인하세요.
 
 ## 시작하기
 
@@ -157,7 +184,12 @@ python src/check_gpu.py
 - [ ] 스트리밍 응답
 - [x] Docker 컨테이너화 (스택별 분리)
 - [x] 모니터링 (Prometheus + Grafana + Loki + Alloy)
+  - 6개의 Grafana 대시보드 (System Overview, Training/Inference Metrics & Detail, Logs)
+  - 구조화된 JSON 로깅 (training, inference, system, api)
+  - LogQL 기반 로그 쿼리
 - [ ] CI/CD 파이프라인
+
+> 📖 **배포 및 모니터링 상세**: [deployment/README.md](deployment/README.md)
 
 ## 필수 요구사항
 
@@ -177,6 +209,8 @@ python src/check_gpu.py
 - OpenAI API Key (합성 데이터 생성 시)
 
 ## 주요 명령어
+
+### 개발 환경
 
 ```bash
 # pyenv 가상환경 (자동 활성화 - .python-version)
@@ -205,13 +239,40 @@ python -m pytest tests/serve/ -v
 alembic current                           # 현재 상태
 alembic revision --autogenerate -m "설명"  # 마이그레이션 생성
 alembic upgrade head                       # 적용
-
-# Docker (스택별 실행)
-docker compose -f docker/docker-compose.mlflow.yml up -d      # MLflow만
-docker compose -f docker/docker-compose.serving.yml up -d     # Serving만
-docker compose -f docker/docker-compose.monitoring.yml up -d  # Monitoring만
-docker compose -f docker/docker-compose.yml up -d             # 전체 스택
 ```
+
+### 프로덕션 배포 (Docker)
+
+Docker Compose를 통해 MLOps 전체 스택을 배포할 수 있습니다.
+
+```bash
+# 전체 스택 실행
+docker compose -f docker/docker-compose.yml up -d
+
+# 개별 스택 실행
+docker compose -f docker/docker-compose.mlflow.yml up -d      # MLflow 스택
+docker compose -f docker/docker-compose.serving.yml up -d     # Serving 스택
+docker compose -f docker/docker-compose.monitoring.yml up -d  # Monitoring 스택
+
+# 서비스 상태 확인
+docker compose -f docker/docker-compose.yml ps
+
+# 로그 확인
+docker compose -f docker/docker-compose.yml logs -f [service-name]
+
+# 중지
+docker compose -f docker/docker-compose.yml down
+```
+
+**주요 서비스 포트:**
+- MLflow UI: http://localhost:5050
+- vLLM OpenAI API: http://localhost:8000/docs
+- FastAPI: http://localhost:8080/docs
+- Grafana: http://localhost:3000 (admin/admin)
+- Prometheus: http://localhost:9090
+- Alloy UI: http://localhost:12345
+
+> 📖 **상세 배포 가이드**: [deployment/README.md](deployment/README.md)에서 로그 구조, 모니터링 대시보드, 백업, 성능 튜닝, 트러블슈팅 등 전체 배포 가이드를 확인하세요.
 
 ## 트러블슈팅
 
@@ -232,11 +293,18 @@ docker compose -f docker/docker-compose.yml up -d             # 전체 스택
 
 ## 상세 문서
 
+### 사용자 가이드
+- [**배포 가이드**](deployment/README.md) - Docker Compose 배포, 모니터링, 로그 관리, 백업, 트러블슈팅
 - [vLLM 서버 가이드](docs/references/VLLM.md) - vLLM 서빙 상세 가이드
 - [로깅 시스템 가이드](docs/references/LOGGING.md) - 구조화된 로깅 사용법
+- [Grafana 드릴다운 워크플로우](docs/references/GRAFANA_DRILLDOWN_WORKFLOW.md) - 대시보드 활용법
+
+### 개발 문서
 - [클린 아키텍처 리팩토링 계획](docs/plans/clean-architecture-refactoring.md) - 리팩토링 로드맵
 - [Docker 구조 재편 계획](docs/plans/docker-compose-restructure.md) - Docker Compose 분리
-- [배포 가이드](deployment/CLAUDE.md) - Docker Compose 배포
+
+### AI 에이전트용 가이드
+- [deployment/CLAUDE.md](deployment/CLAUDE.md) - 배포 간략 가이드 (AI용)
 
 ## 참고 자료
 

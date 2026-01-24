@@ -1,5 +1,7 @@
 # MLOps Deployment Guide
 
+> 📌 **[← 프로젝트 루트로 돌아가기](../README.md)**
+
 Docker Compose 기반 MLOps 시스템 배포 가이드입니다.
 
 ## 아키텍처 개요
@@ -516,7 +518,8 @@ Docker Swarm 또는 Kubernetes로 확장 가능:
 - [MLflow Documentation](https://mlflow.org/docs/latest/)
 
 ### 프로젝트 문서
-- [deployment/CLAUDE.md](CLAUDE.md) - 배포 및 모니터링 가이드
+- [프로젝트 루트 README](../README.md) - 프로젝트 전체 개요
+- [deployment/CLAUDE.md](CLAUDE.md) - AI 에이전트용 배포 가이드 (간략)
 - [GRAFANA_DRILLDOWN_WORKFLOW.md](../docs/references/GRAFANA_DRILLDOWN_WORKFLOW.md) - 대시보드 드릴다운 워크플로우
 - [LOGGING.md](../docs/references/LOGGING.md) - 구조화된 로깅 가이드
 - [VLLM.md](../docs/references/VLLM.md) - vLLM 서빙 가이드
