@@ -101,8 +101,8 @@
         "JSON 파일 유효성 검증"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": "US-003 완료 후 실행"
+      "passes": true,
+      "notes": "4개 패널에 드릴다운 링크 추가: id:1(Training Logs), id:2(Training Step), id:3(Latest Loss), id:4(Training Errors). 모든 패널에 description으로 '클릭하여 상세 보기' 안내 추가. experiment_id, run_id 변수 전달."
     },
     {
       "id": "US-007",
