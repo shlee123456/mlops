@@ -86,8 +86,8 @@
         "JSON 파일 유효성 검증"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "5개 패널에 드릴다운 링크 추가: id:101(FastAPI→inference-metrics), id:102(vLLM→inference-detail), id:103(MLflow→training-metrics), id:11(HTTP Requests Rate→inference-metrics), id:12(HTTP Request Duration→inference-metrics). training-metrics.json에 uid 추가."
     },
     {
       "id": "US-006",
