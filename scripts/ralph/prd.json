@@ -70,8 +70,8 @@
         "JSON 파일 유효성 검증"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "US-001, US-002 완료 후 실행"
+      "passes": true,
+      "notes": "3개 패널에 드릴다운 링크 추가: id:2(endpoint→inference-detail/logs), id:7(model→inference-detail/logs), id:8(model→inference-detail/logs)"
     },
     {
       "id": "US-005",
