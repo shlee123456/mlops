@@ -20,12 +20,24 @@
       },
       "type": "logs",
       "title": "Training Logs",
+      "description": "클릭하여 상세 보기 - Training Detail 대시보드로 이동",
       "targets": [
         {
           "expr": "{job=\"training\"}",
           "refId": "A"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "실험 상세 보기",
+              "url": "/d/training-detail?var-experiment_id=${__field.labels.experiment_id}&var-run_id=${__field.labels.run_id}&from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ]
+        }
+      },
       "options": {
         "showTime": true,
         "wrapLogMessage": true,
@@ -42,12 +54,24 @@
       },
       "type": "stat",
       "title": "Current Training Step",
+      "description": "클릭하여 상세 보기 - Training Detail 대시보드로 이동",
       "targets": [
         {
           "expr": "{job=\"training\"} | json | line_format \"{{.step}}\"",
           "refId": "A"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "실험 상세 보기",
+              "url": "/d/training-detail?var-experiment_id=${__field.labels.experiment_id}&var-run_id=${__field.labels.run_id}&from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ]
+        }
+      },
       "options": {
         "textMode": "value",
         "colorMode": "value",
@@ -64,12 +88,24 @@
       },
       "type": "stat",
       "title": "Latest Loss",
+      "description": "클릭하여 상세 보기 - Training Detail 대시보드로 이동",
       "targets": [
         {
           "expr": "{job=\"training\"} | json | line_format \"{{.loss}}\"",
           "refId": "A"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "실험 상세 보기",
+              "url": "/d/training-detail?var-experiment_id=${__field.labels.experiment_id}&var-run_id=${__field.labels.run_id}&from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ]
+        }
+      },
       "options": {
         "textMode": "value",
         "colorMode": "value",
@@ -86,12 +122,24 @@
       },
       "type": "logs",
       "title": "Training Errors",
+      "description": "클릭하여 상세 보기 - Training Detail 대시보드로 이동",
       "targets": [
         {
           "expr": "{job=\"training\", level=\"ERROR\"}",
           "refId": "A"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "실험 상세 보기",
+              "url": "/d/training-detail?var-experiment_id=${__field.labels.experiment_id}&var-run_id=${__field.labels.run_id}&from=${__from}&to=${__to}",
+              "targetBlank": false
+            }
+          ]
+        }
+      },
       "options": {
         "showTime": true,
         "wrapLogMessage": true,
