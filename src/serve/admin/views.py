@@ -10,12 +10,12 @@ from sqlalchemy import or_, func, cast, Date
 from sqladmin import ModelView, BaseView, expose
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
-from wtforms import PasswordField
+from wtforms import PasswordField, SelectField
 from wtforms.validators import Optional
 
 from src.serve.models.chat import LLMConfig, Conversation, ChatMessage, FewshotMessage
 from src.serve.models.llm import LLMModel
-from src.serve.models.user import User
+from src.serve.models.user import User, UserRole
 from src.serve.database import sync_engine
 from src.serve.core.config import settings
 from src.serve.core.security import hash_password
@@ -37,6 +37,20 @@ class UserAdmin(ModelView, model=User):
     # 비밀번호 필드 추가 (가상 필드)
     form_extra_fields = {
         "password": PasswordField("비밀번호", validators=[Optional()])
+    }
+
+    # Role 필드를 SelectField로 오버라이드
+    form_overrides = {
+        "role": SelectField
+    }
+
+    # Role 선택지 및 기본값 설정
+    form_args = {
+        "role": {
+            "label": "역할",
+            "choices": [(role.value, role.value) for role in UserRole],
+            "default": UserRole.USER.value
+        }
     }
 
     async def insert_model(self, request: Request, data: dict) -> User:

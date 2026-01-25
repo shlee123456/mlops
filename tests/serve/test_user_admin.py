@@ -155,3 +155,36 @@ async def test_user_admin_update_without_password(client: AsyncClient, test_db):
     assert user.role == UserRole.ADMIN  # role은 변경됨
     assert user.password_hash == original_hash  # 비밀번호는 유지
     assert verify_password("keepthispassword", user.password_hash)
+
+
+@pytest.mark.asyncio
+async def test_user_admin_role_dropdown(client: AsyncClient, test_db):
+    """Admin에서 User 생성 시 role 드롭다운 선택"""
+    # Admin 로그인
+    await client.post(
+        "/admin/login",
+        data={"username": "admin", "password": "changeme"}
+    )
+
+    # User 생성 (role을 guest로 설정)
+    create_response = await client.post(
+        "/admin/user/create",
+        data={
+            "username": "guestuser",
+            "password": "guestpassword",
+            "role": "guest",
+            "is_active": "true"
+        },
+        follow_redirects=False
+    )
+
+    assert create_response.status_code in [302, 303]
+
+    # DB에서 확인
+    result = await test_db.execute(
+        select(User).where(User.username == "guestuser")
+    )
+    user = result.scalar_one_or_none()
+
+    assert user is not None
+    assert user.role == UserRole.GUEST
