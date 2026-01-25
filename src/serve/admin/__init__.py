@@ -9,6 +9,7 @@ from sqladmin import Admin
 from src.serve.database import sync_engine
 from src.serve.admin.auth import AdminAuthBackend
 from src.serve.admin.views import (
+    UserAdmin,
     LLMConfigAdmin,
     ConversationAdmin,
     ChatMessageAdmin,
@@ -35,6 +36,7 @@ def create_admin(app) -> Admin:
     )
 
     # ModelView 등록
+    admin.add_view(UserAdmin)
     admin.add_view(LLMConfigAdmin)
     admin.add_view(ConversationAdmin)
     admin.add_view(ChatMessageAdmin)

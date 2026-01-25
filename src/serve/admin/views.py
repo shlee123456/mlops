@@ -12,6 +12,7 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
 from src.serve.models.chat import LLMConfig, Conversation, ChatMessage
+from src.serve.models.user import User
 from src.serve.database import sync_engine
 from src.serve.core.config import settings
 
@@ -19,6 +20,16 @@ from src.serve.core.config import settings
 # ============================================================
 # ModelView Classes
 # ============================================================
+
+class UserAdmin(ModelView, model=User):
+    name = "사용자"
+    name_plural = "사용자 목록"
+    icon = "fa-solid fa-users"
+    column_list = [User.id, User.username, User.role, User.is_active, User.created_at, User.updated_at]
+    column_searchable_list = [User.username]
+    column_default_sort = ("created_at", True)
+    form_excluded_columns = [User.password_hash]
+
 
 class LLMConfigAdmin(ModelView, model=LLMConfig):
     name = "LLM 설정"
