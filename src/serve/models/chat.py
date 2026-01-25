@@ -37,6 +37,10 @@ class LLMConfig(Base):
     conversations: Mapped[list["Conversation"]] = relationship(
         "Conversation", back_populates="llm_config"
     )
+    fewshot_messages: Mapped[list["FewshotMessage"]] = relationship(
+        "FewshotMessage", back_populates="llm_config", cascade="all, delete-orphan",
+        order_by="FewshotMessage.order"
+    )
 
     def __repr__(self) -> str:
         return f"<LLMConfig(id={self.id}, name={self.name})>"
@@ -105,3 +109,27 @@ class ChatMessage(Base):
 
     def __repr__(self) -> str:
         return f"<ChatMessage(id={self.id}, role={self.role})>"
+
+
+class FewshotMessage(Base):
+    """Few-shot 예시 메시지 - LLM 설정에 포함되는 예시 대화"""
+    __tablename__ = "fewshot_messages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    llm_config_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("llm_configs.id"), nullable=False
+    )
+    role: Mapped[str] = mapped_column(String(20), nullable=False)  # user/assistant
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    # 관계
+    llm_config: Mapped["LLMConfig"] = relationship(
+        "LLMConfig", back_populates="fewshot_messages"
+    )
+
+    def __repr__(self) -> str:
+        return f"<FewshotMessage(id={self.id}, llm_config_id={self.llm_config_id}, role={self.role})>"
