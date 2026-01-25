@@ -3,12 +3,15 @@ LLM Model - LLM 엔드포인트 관리 ORM 모델
 """
 
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import String, Text, Integer, DateTime, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.serve.database import Base
+
+if TYPE_CHECKING:
+    from src.serve.models.chat import LLMConfig
 
 
 class LLMModel(Base):
@@ -23,6 +26,11 @@ class LLMModel(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    # 관계
+    configs: Mapped[list["LLMConfig"]] = relationship(
+        "LLMConfig", back_populates="llm_model"
     )
 
     def __repr__(self) -> str:

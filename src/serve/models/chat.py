@@ -18,6 +18,9 @@ class LLMConfig(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     model_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    llm_model_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("llm_models.id"), nullable=True
+    )
     system_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     temperature: Mapped[float] = mapped_column(Float, default=0.7, nullable=False)
     max_tokens: Mapped[int] = mapped_column(Integer, default=512, nullable=False)
@@ -28,6 +31,9 @@ class LLMConfig(Base):
     )
 
     # 관계
+    llm_model: Mapped[Optional["LLMModel"]] = relationship(
+        "LLMModel", back_populates="configs"
+    )
     conversations: Mapped[list["Conversation"]] = relationship(
         "Conversation", back_populates="llm_config"
     )
