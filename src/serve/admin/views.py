@@ -268,13 +268,27 @@ class MessageStatisticsView(BaseView):
                 ChatMessage.tokens_used.isnot(None)
             ).scalar() or 0
 
-            # 역할별 통계
+            # 평균 TTFT 계산 (first_token_at - created_at 밀리초)
+            # SQLite에서 datetime 차이 계산
+            avg_ttft_ms = session.query(
+                func.avg(
+                    (func.julianday(ChatMessage.first_token_at) - func.julianday(ChatMessage.created_at)) * 86400000
+                )
+            ).filter(
+                date_filter,
+                ChatMessage.first_token_at.isnot(None)
+            ).scalar() or 0
+
+            # 역할별 통계 (TTFT 포함)
             role_stats_query = session.query(
                 ChatMessage.role,
                 func.count(ChatMessage.id).label('count'),
                 func.avg(ChatMessage.latency_ms).label('avg_latency'),
                 func.avg(ChatMessage.tokens_used).label('avg_tokens'),
-                func.sum(ChatMessage.tokens_used).label('total_tokens')
+                func.sum(ChatMessage.tokens_used).label('total_tokens'),
+                func.avg(
+                    (func.julianday(ChatMessage.first_token_at) - func.julianday(ChatMessage.created_at)) * 86400000
+                ).label('avg_ttft')
             ).filter(date_filter).group_by(ChatMessage.role).all()
 
             role_stats = [
@@ -284,16 +298,20 @@ class MessageStatisticsView(BaseView):
                     "avg_latency": r.avg_latency,
                     "avg_tokens": r.avg_tokens,
                     "total_tokens": r.total_tokens,
+                    "avg_ttft": r.avg_ttft,
                 }
                 for r in role_stats_query
             ]
 
-            # 일별 통계
+            # 일별 통계 (TTFT 포함)
             daily_stats_query = session.query(
                 cast(ChatMessage.created_at, Date).label('date'),
                 func.count(ChatMessage.id).label('count'),
                 func.avg(ChatMessage.latency_ms).label('avg_latency'),
-                func.avg(ChatMessage.tokens_used).label('avg_tokens')
+                func.avg(ChatMessage.tokens_used).label('avg_tokens'),
+                func.avg(
+                    (func.julianday(ChatMessage.first_token_at) - func.julianday(ChatMessage.created_at)) * 86400000
+                ).label('avg_ttft')
             ).filter(date_filter).group_by(
                 cast(ChatMessage.created_at, Date)
             ).order_by(cast(ChatMessage.created_at, Date).desc()).limit(14).all()
@@ -304,6 +322,7 @@ class MessageStatisticsView(BaseView):
                     "count": d.count,
                     "avg_latency": d.avg_latency,
                     "avg_tokens": d.avg_tokens,
+                    "avg_ttft": d.avg_ttft,
                 }
                 for d in daily_stats_query
             ]
@@ -321,6 +340,7 @@ class MessageStatisticsView(BaseView):
                 "total_conversations": total_conversations,
                 "avg_latency_ms": avg_latency_ms,
                 "avg_tokens": avg_tokens,
+                "avg_ttft_ms": avg_ttft_ms,
                 "role_stats": role_stats,
                 "daily_stats": daily_stats,
                 "csrf_token": csrf_token,

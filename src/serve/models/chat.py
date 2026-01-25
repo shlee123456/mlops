@@ -91,13 +91,16 @@ class ChatMessage(Base):
     )
     role: Mapped[str] = mapped_column(String(20), nullable=False)  # system/user/assistant
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    
+
     # 메타데이터
     model: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     tokens_used: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     latency_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     extra_data: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-    
+
+    # TTFT (Time To First Token) 측정
+    first_token_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )
@@ -106,6 +109,14 @@ class ChatMessage(Base):
     conversation: Mapped["Conversation"] = relationship(
         "Conversation", back_populates="messages"
     )
+
+    @property
+    def ttft_ms(self) -> Optional[int]:
+        """TTFT (Time To First Token) 계산 - 밀리초 단위"""
+        if self.first_token_at is None or self.created_at is None:
+            return None
+        delta = self.first_token_at - self.created_at
+        return int(delta.total_seconds() * 1000)
 
     def __repr__(self) -> str:
         return f"<ChatMessage(id={self.id}, role={self.role})>"
