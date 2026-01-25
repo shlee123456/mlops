@@ -10,12 +10,15 @@ from sqlalchemy import or_, func, cast, Date
 from sqladmin import ModelView, BaseView, expose
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
+from wtforms import PasswordField
+from wtforms.validators import Optional
 
 from src.serve.models.chat import LLMConfig, Conversation, ChatMessage, FewshotMessage
 from src.serve.models.llm import LLMModel
 from src.serve.models.user import User
 from src.serve.database import sync_engine
 from src.serve.core.config import settings
+from src.serve.core.security import hash_password
 
 
 # ============================================================
@@ -29,7 +32,32 @@ class UserAdmin(ModelView, model=User):
     column_list = [User.id, User.username, User.role, User.is_active, User.created_at, User.updated_at]
     column_searchable_list = [User.username]
     column_default_sort = ("created_at", True)
-    form_excluded_columns = [User.password_hash]
+    form_excluded_columns = [User.password_hash, User.created_at, User.updated_at]
+
+    # 비밀번호 필드 추가 (가상 필드)
+    form_extra_fields = {
+        "password": PasswordField("비밀번호", validators=[Optional()])
+    }
+
+    async def on_model_change(self, data: dict, model: User, is_created: bool, request: Request) -> None:
+        """모델 저장 전 비밀번호 해싱 처리"""
+        password = data.get("password")
+
+        if is_created:
+            # 신규 생성 시 비밀번호 필수
+            if not password:
+                raise ValueError("비밀번호는 필수입니다")
+            model.password_hash = hash_password(password)
+        else:
+            # 수정 시 비밀번호 입력했을 때만 변경
+            if password:
+                model.password_hash = hash_password(password)
+
+        # password는 임시 필드이므로 삭제
+        if "password" in data:
+            del data["password"]
+
+        await super().on_model_change(data, model, is_created, request)
 
 
 class LLMModelAdmin(ModelView, model=LLMModel):
