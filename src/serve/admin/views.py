@@ -39,25 +39,36 @@ class UserAdmin(ModelView, model=User):
         "password": PasswordField("비밀번호", validators=[Optional()])
     }
 
-    async def on_model_change(self, data: dict, model: User, is_created: bool, request: Request) -> None:
-        """모델 저장 전 비밀번호 해싱 처리"""
-        password = data.get("password")
+    async def insert_model(self, request: Request, data: dict) -> User:
+        """Create new user with password"""
+        # Form 데이터 직접 읽기
+        form_data = await request.form()
+        password = form_data.get("password", "")
 
-        if is_created:
-            # 신규 생성 시 비밀번호 필수
-            if not password:
-                raise ValueError("비밀번호는 필수입니다")
-            model.password_hash = hash_password(password)
-        else:
-            # 수정 시 비밀번호 입력했을 때만 변경
-            if password:
-                model.password_hash = hash_password(password)
+        if not password:
+            raise ValueError("비밀번호는 필수입니다")
 
-        # password는 임시 필드이므로 삭제
-        if "password" in data:
-            del data["password"]
+        # password_hash 설정
+        data["password_hash"] = hash_password(password)
+        # password 필드가 data에 있으면 제거
+        data.pop("password", None)
 
-        await super().on_model_change(data, model, is_created, request)
+        return await super().insert_model(request, data)
+
+    async def update_model(self, request: Request, pk: str, data: dict) -> User:
+        """Update user, only change password if provided"""
+        # Form 데이터 직접 읽기
+        form_data = await request.form()
+        password = form_data.get("password", "")
+
+        # 비밀번호가 입력된 경우에만 해싱하여 저장
+        if password:
+            data["password_hash"] = hash_password(password)
+
+        # password 필드가 data에 있으면 제거
+        data.pop("password", None)
+
+        return await super().update_model(request, pk, data)
 
 
 class LLMModelAdmin(ModelView, model=LLMModel):
