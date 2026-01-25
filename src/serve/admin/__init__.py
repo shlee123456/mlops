@@ -14,6 +14,7 @@ from src.serve.admin.views import (
     LLMConfigAdmin,
     ConversationAdmin,
     ChatMessageAdmin,
+    FewshotMessageAdmin,
     SystemStatusView,
     MessageStatisticsView,
     VLLMStatusView,
@@ -42,6 +43,7 @@ def create_admin(app) -> Admin:
     admin.add_view(LLMConfigAdmin)
     admin.add_view(ConversationAdmin)
     admin.add_view(ChatMessageAdmin)
+    admin.add_view(FewshotMessageAdmin)
 
     # BaseView (커스텀 대시보드) 등록
     admin.add_view(SystemStatusView)

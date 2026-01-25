@@ -11,7 +11,7 @@ from sqladmin import ModelView, BaseView, expose
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
-from src.serve.models.chat import LLMConfig, Conversation, ChatMessage
+from src.serve.models.chat import LLMConfig, Conversation, ChatMessage, FewshotMessage
 from src.serve.models.llm import LLMModel
 from src.serve.models.user import User
 from src.serve.database import sync_engine
@@ -122,6 +122,48 @@ class ChatMessageAdmin(ModelView, model=ChatMessage):
                 id_filter,
                 ChatMessage.content.ilike(f'%{term}%'),
                 ChatMessage.role.ilike(f'%{term}%')
+            )
+        )
+
+
+class FewshotMessageAdmin(ModelView, model=FewshotMessage):
+    name = "Few-shot 메시지"
+    name_plural = "Few-shot 메시지 목록"
+    icon = "fa-solid fa-list-ol"
+    column_list = [
+        FewshotMessage.id,
+        FewshotMessage.llm_config_id,
+        FewshotMessage.role,
+        FewshotMessage.content,
+        FewshotMessage.order,
+        FewshotMessage.created_at
+    ]
+    column_searchable_list = [FewshotMessage.role, FewshotMessage.content]
+    column_default_sort = [("llm_config_id", False), ("order", False)]
+    column_formatters = {
+        FewshotMessage.content: lambda m, a: (m.content[:50] + "..." if m.content and len(m.content) > 50 else m.content),
+    }
+
+    def search_query(self, stmt, term: str):
+        """커스텀 검색 - llm_config_id 숫자 검색 및 텍스트 검색"""
+        if term == "":
+            return stmt
+
+        # ID 숫자 검색 시도
+        try:
+            config_id = int(term)
+            id_filter = or_(
+                FewshotMessage.id == config_id,
+                FewshotMessage.llm_config_id == config_id
+            )
+        except ValueError:
+            id_filter = False
+
+        return stmt.filter(
+            or_(
+                id_filter,
+                FewshotMessage.role.ilike(f'%{term}%'),
+                FewshotMessage.content.ilike(f'%{term}%')
             )
         )
 
