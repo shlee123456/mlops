@@ -39,18 +39,33 @@ docker/
 
 ## 서비스 포트
 
-| 포트 | 서비스 | 계정 |
-|------|--------|------|
-| 5050 | MLflow UI | - |
-| 8000 | vLLM (OpenAI API) | - |
-| 8080 | FastAPI | - |
-| 9090 | Prometheus | - |
-| 3000 | Grafana | admin/admin |
-| 3100 | Loki | - |
-| 12345 | Alloy UI | - |
-| 9000 | MinIO | minio/minio123 |
-| 9001 | MinIO Console | minio/minio123 |
-| 5432 | PostgreSQL | mlflow/mlflow |
+| 포트 (기본값) | 서비스 | 계정 | 환경변수 |
+|--------------|--------|------|----------|
+| 5050 | MLflow UI | - | `MLFLOW_PORT` |
+| 8000 | vLLM (OpenAI API) | - | `VLLM_PORT` |
+| 8080 | FastAPI | - | `FASTAPI_EXTERNAL_PORT` |
+| 9090 | Prometheus | - | `PROMETHEUS_PORT` |
+| 3000 | Grafana | admin/admin | `GRAFANA_PORT` |
+| 3100 | Loki | - | `LOKI_PORT` |
+| 12345 | Alloy UI | - | `ALLOY_PORT` |
+| 9000 | MinIO | minio/minio123 | `MINIO_PORT` |
+| 9001 | MinIO Console | minio/minio123 | `MINIO_CONSOLE_PORT` |
+| 5432 | PostgreSQL | mlflow/mlflow | `POSTGRES_PORT` |
+
+**포트 변경 방법**: 프로젝트 루트의 `.env` 파일에서 환경변수를 수정하여 포트를 변경할 수 있습니다.
+
+```bash
+# 환경 파일 생성
+cp env.example .env
+
+# 포트 커스터마이징
+vim .env
+
+# 예시
+GRAFANA_PORT=3001
+MLFLOW_PORT=5051
+FASTAPI_EXTERNAL_PORT=8081
+```
 
 ## 실행
 

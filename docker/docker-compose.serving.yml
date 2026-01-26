@@ -19,7 +19,7 @@ services:
   #     - ../models:/models
   #     - ../logs/vllm:/logs
   #   ports:
-  #     - "8000:8000"
+  #     - "${VLLM_PORT:-8000}:8000"
   #   networks:
   #     - mlops-network
   #   deploy:
@@ -60,7 +60,7 @@ services:
       - ../alembic.ini:/app/alembic.ini
       - fastapi_data:/app/data
     ports:
-      - "8080:8080"
+      - "${FASTAPI_EXTERNAL_PORT:-8080}:8080"
     networks:
       - mlops-network
     healthcheck:

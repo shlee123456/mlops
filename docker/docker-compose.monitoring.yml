@@ -7,7 +7,7 @@ services:
       - ../deployment/monitoring/configs/loki/loki-config.yaml:/etc/loki/loki-config.yaml
       - loki_data:/loki
     ports:
-      - "3100:3100"
+      - "${LOKI_PORT:-3100}:3100"
     networks:
       - mlops-network
     healthcheck:
@@ -33,7 +33,7 @@ services:
       - /:/host/root:ro
       - alloy_data:/var/lib/alloy/data
     ports:
-      - "12345:12345"
+      - "${ALLOY_PORT:-12345}:12345"
     networks:
       - mlops-network
     depends_on:
@@ -55,7 +55,7 @@ services:
       - ../deployment/monitoring/configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     ports:
-      - "9090:9090"
+      - "${PROMETHEUS_PORT:-9090}:9090"
     networks:
       - mlops-network
     healthcheck:
@@ -76,7 +76,7 @@ services:
       - ../deployment/monitoring/configs/grafana/dashboards:/var/lib/grafana/dashboards
       - grafana_data:/var/lib/grafana
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3000}:3000"
     networks:
       - mlops-network
     depends_on:

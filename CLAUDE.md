@@ -19,16 +19,23 @@ LLM Fine-tuning → 프로덕션 배포 MLOps 파이프라인
 ./scripts/ralph/ralph.sh --tool claude [max_iterations]
 ```
 
-### 2. 서브 CLAUDE.md 관리
+### 2. 터미널 로그 기록
+모든 Bash 명령어(빌드, 테스트, 설치, 실행) 실행 시 `.context/terminal/`에 로그 저장:
+```bash
+[명령어] 2>&1 | tee .context/terminal/[명령어]_$(date +%s).log
+```
+
+### 3. 서브 CLAUDE.md 관리
 - 새 디렉토리/모듈 생성 시 → 해당 디렉토리에 서브 CLAUDE.md 생성
 - 기존 구조 변경 시 → 관련 서브 CLAUDE.md 업데이트
 
-### 3. Git 커밋 규칙
+### 4. Git 커밋 규칙
 - 커밋 메시지는 **한글**로 작성
 - `Co-Authored-By` 태그 **사용 금지**
 - 형식: `<type>: <한글 설명>` (feat, fix, docs, refactor, test, chore)
 
-### 4. 작업 완료 체크리스트
+### 5. 작업 완료 체크리스트
+- [ ] 터미널 로그 저장했는가?
 - [ ] 테스트 통과했는가? (`python -m pytest tests/serve/ -v`)
 - [ ] 서브 CLAUDE.md 업데이트 필요한가?
 
@@ -152,6 +159,10 @@ docker compose -f docker/docker-compose.yml up -d
 docker compose -f docker/docker-compose.mlflow.yml up -d
 docker compose -f docker/docker-compose.serving.yml up -d
 docker compose -f docker/docker-compose.monitoring.yml up -d
+
+# 터미널 로그 기록 (필수)
+python -m pytest tests/serve/ -v 2>&1 | tee .context/terminal/test_$(date +%s).log
+python src/train/01_lora_finetune.py 2>&1 | tee .context/terminal/train_$(date +%s).log
 ```
 
 ## 환경변수
@@ -174,8 +185,19 @@ docker compose -f docker/docker-compose.monitoring.yml up -d
 | `ADMIN_USERNAME` | admin | 관리자 ID |
 | `ADMIN_PASSWORD` | changeme | 관리자 비밀번호 |
 | `JWT_SECRET_KEY` | change-this-... | JWT 서명 키 |
+| **Docker 서비스 포트** | | |
+| `POSTGRES_PORT` | 5432 | PostgreSQL |
+| `MINIO_PORT` | 9000 | MinIO API |
+| `MINIO_CONSOLE_PORT` | 9001 | MinIO 콘솔 |
+| `MLFLOW_PORT` | 5050 | MLflow UI |
+| `VLLM_PORT` | 8000 | vLLM 서버 |
+| `FASTAPI_EXTERNAL_PORT` | 8080 | FastAPI 외부 포트 |
+| `LOKI_PORT` | 3100 | Loki |
+| `ALLOY_PORT` | 12345 | Alloy UI |
+| `PROMETHEUS_PORT` | 9090 | Prometheus |
+| `GRAFANA_PORT` | 3000 | Grafana |
 
-환경 파일: `cp env.example .env`
+환경 파일: `cp env.example .env` (FastAPI + Docker 통합 관리)
 
 ## Ralph 자율 에이전트 워크플로우
 
