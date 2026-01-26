@@ -32,3 +32,23 @@ Started: Mon Jan 26 13:38:07 KST 2026
 - SQLAdmin은 Flask-Admin에서 영감을 받았지만 모든 기능이 구현된 것은 아님
 
 ---
+
+## 2026-01-26 13:43:20 - US-002
+- 커스텀 템플릿 방식 조사 및 불가 판단
+- Files changed: (없음)
+- **조사 결과:**
+  - SQLAdmin 템플릿은 `create_template` 속성으로 오버라이드 가능
+  - 기본 템플릿 구조: create.html → render_form_fields() 매크로 → form 객체의 필드 자동 렌더링
+  - **문제점**: form_extra_fields가 form 객체에 필드를 추가하지 않음 (US-001에서 확인)
+  - 템플릿에서 수동으로 password 필드를 하드코딩하는 것은 가능하지만:
+    - WTForms 폼 검증과 분리됨
+    - CSRF 토큰, 에러 메시지 처리 등을 수동 구현해야 함
+    - 유지보수가 어렵고 SQLAdmin 업그레이드 시 깨질 가능성 높음
+- **결론**: 커스텀 템플릿 방식은 **비권장** (근본 해결책 아님)
+
+**Learnings for future iterations:**
+- 템플릿 오버라이드는 UI 커스터마이징에는 유용하지만, 폼 필드 추가에는 적합하지 않음
+- render_form_fields() 매크로는 form 객체의 필드만 렌더링하므로 form 객체에 필드가 없으면 소용없음
+- 근본 해결을 위해서는 form 객체 자체를 수정해야 함 (scaffold_form 오버라이드 또는 form 속성 직접 지정)
+
+---

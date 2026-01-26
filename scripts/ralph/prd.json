@@ -31,8 +31,8 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "조사 결과: 비권장 방식으로 판단. render_form_fields() 매크로가 form 객체의 필드만 렌더링하므로, 템플릿에 필드를 하드코딩해도 WTForms 검증과 분리되어 유지보수성 낮음. 근본 해결을 위해서는 form 객체 자체 수정 필요."
     },
     {
       "id": "US-003",
