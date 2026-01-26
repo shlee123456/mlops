@@ -20,7 +20,9 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # Install vLLM and dependencies
+# numpy<2 required for vllm 0.2.7 compatibility
 RUN pip install --no-cache-dir \
+    "numpy<2" \
     vllm==0.2.7 \
     transformers==4.36.0 \
     accelerate==0.25.0 \
@@ -30,16 +32,19 @@ RUN pip install --no-cache-dir \
 # Copy application code
 COPY src/ /app/src/
 
+# Copy startup script
+COPY deployment/serving/start-vllm.sh /app/start-vllm.sh
+RUN chmod +x /app/start-vllm.sh
+
 # Create logs directory
 RUN mkdir -p /logs
 
-EXPOSE 8000
+# Expose ports for both models
+EXPOSE 8000 8001
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+# Healthcheck (checks Model 1 by default)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:${MODEL_1_PORT:-8000}/health || exit 1
 
-CMD ["python", "-m", "vllm.entrypoints.openai.api_server", \
-     "--model", "/models/base/meta-llama/Meta-Llama-3-8B-Instruct", \
-     "--host", "0.0.0.0", \
-     "--port", "8000"]
+# Start vLLM servers via startup script
+CMD ["/app/start-vllm.sh"]

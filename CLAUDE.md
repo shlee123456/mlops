@@ -190,8 +190,16 @@ python src/train/01_lora_finetune.py 2>&1 | tee .context/terminal/train_$(date +
 | `MINIO_PORT` | 9000 | MinIO API |
 | `MINIO_CONSOLE_PORT` | 9001 | MinIO 콘솔 |
 | `MLFLOW_PORT` | 5050 | MLflow UI |
-| `VLLM_PORT` | 8000 | vLLM 서버 |
 | `FASTAPI_EXTERNAL_PORT` | 8080 | FastAPI 외부 포트 |
+| **vLLM 다중 모델** | | |
+| `MODEL_1_ENABLED` | true | 모델 1 활성화 |
+| `MODEL_1_PATH` | - | 모델 1 경로 |
+| `MODEL_1_GPU` | 0 | 모델 1 GPU 번호 |
+| `MODEL_1_PORT` | 8000 | 모델 1 API 포트 |
+| `MODEL_2_ENABLED` | false | 모델 2 활성화 |
+| `MODEL_2_PATH` | - | 모델 2 경로 |
+| `MODEL_2_GPU` | 1 | 모델 2 GPU 번호 |
+| `MODEL_2_PORT` | 8001 | 모델 2 API 포트 |
 | `LOKI_PORT` | 3100 | Loki |
 | `ALLOY_PORT` | 12345 | Alloy UI |
 | `PROMETHEUS_PORT` | 9090 | Prometheus |

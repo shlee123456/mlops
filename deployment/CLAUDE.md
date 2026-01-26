@@ -42,7 +42,8 @@ docker/
 | 포트 (기본값) | 서비스 | 계정 | 환경변수 |
 |--------------|--------|------|----------|
 | 5050 | MLflow UI | - | `MLFLOW_PORT` |
-| 8000 | vLLM (OpenAI API) | - | `VLLM_PORT` |
+| 8000 | vLLM 모델 1 (GPU 0) | - | `MODEL_1_PORT` |
+| 8001 | vLLM 모델 2 (GPU 1) | - | `MODEL_2_PORT` |
 | 8080 | FastAPI | - | `FASTAPI_EXTERNAL_PORT` |
 | 9090 | Prometheus | - | `PROMETHEUS_PORT` |
 | 3000 | Grafana | admin/admin | `GRAFANA_PORT` |
@@ -113,38 +114,84 @@ Monitoring      : loki, prometheus, grafana, alloy
 
 ## GPU 서비스 요구사항
 
-### GPU 설정
+### GPU 구성
 
-시스템 GPU 구성:
-- **GPU 0**: RTX 5090 (32GB VRAM) - 프로덕션 서빙 권장
-- **GPU 1**: RTX 5060 Ti (16GB VRAM) - 테스트/개발 권장
+시스템 GPU:
+- **GPU 0**: RTX 5090 (32GB VRAM) - 대용량 모델/프로덕션 권장
+- **GPU 1**: RTX 5060 Ti (16GB VRAM) - 소형 모델/테스트 권장
 
-### GPU 번호 지정 방법
+### 다중 모델 GPU 할당
 
-특정 GPU를 지정하여 vLLM 서버를 실행할 수 있습니다.
+vLLM 컨테이너는 `.env` 파일의 설정에 따라 **여러 모델을 각각 다른 GPU**에서 실행합니다.
 
-**환경변수 설정:**
+**.env 설정:**
 
 ```bash
-# .env 파일에 추가
-GPU_DEVICE_ID=0  # 0: RTX 5090, 1: RTX 5060 Ti
+# =============================================================================
+# vLLM 다중 모델 설정
+# =============================================================================
+# 모델 1 (GPU 0: RTX 5090, 32GB)
+MODEL_1_ENABLED=true
+MODEL_1_PATH=/models/base/2shlee/llama3-8b-ko-chat-v1
+MODEL_1_GPU=0
+MODEL_1_PORT=8000
+MODEL_1_GPU_MEMORY=0.9
+MODEL_1_MAX_LEN=4096
+
+# 모델 2 (GPU 1: RTX 5060 Ti, 16GB)
+MODEL_2_ENABLED=true
+MODEL_2_PATH=/models/base/meta-llama/Meta-Llama-3-8B-Instruct
+MODEL_2_GPU=1
+MODEL_2_PORT=8001
+MODEL_2_GPU_MEMORY=0.9
+MODEL_2_MAX_LEN=4096
 ```
 
-**사용 예시:**
+**실행:**
 
 ```bash
-# GPU 0 (RTX 5090) 사용 - 프로덕션
-GPU_DEVICE_ID=0 docker compose -f docker/docker-compose.serving.yml up -d
+# .env 파일 설정 후 단순 실행 (GPU 자동 할당)
+docker compose -f docker/docker-compose.serving.yml up -d
 
-# GPU 1 (RTX 5060 Ti) 사용 - 테스트
-GPU_DEVICE_ID=1 docker compose -f docker/docker-compose.serving.yml up -d
+# 로그 확인
+docker compose -f docker/docker-compose.serving.yml logs -f vllm-server
+```
 
-# 학습과 서빙 분리
-# 터미널 1: GPU 0에서 서빙
-GPU_DEVICE_ID=0 docker compose -f docker/docker-compose.serving.yml up -d
+**설정 옵션:**
 
-# 터미널 2: GPU 1에서 학습
-CUDA_VISIBLE_DEVICES=1 python src/train/01_lora_finetune.py
+| 환경변수 | 설명 | 기본값 |
+|---------|------|--------|
+| `MODEL_N_ENABLED` | 모델 활성화 여부 | `false` |
+| `MODEL_N_PATH` | 모델 경로 (컨테이너 내부) | - |
+| `MODEL_N_GPU` | GPU 번호 (0 또는 1) | - |
+| `MODEL_N_PORT` | API 포트 | 8000, 8001 |
+| `MODEL_N_GPU_MEMORY` | GPU 메모리 사용률 | `0.9` |
+| `MODEL_N_MAX_LEN` | 최대 시퀀스 길이 | `4096` |
+
+**사용 시나리오:**
+
+```bash
+# 시나리오 1: 단일 모델 (GPU 0만 사용)
+MODEL_1_ENABLED=true
+MODEL_2_ENABLED=false
+
+# 시나리오 2: 두 모델 동시 서빙
+MODEL_1_ENABLED=true   # GPU 0 → :8000
+MODEL_2_ENABLED=true   # GPU 1 → :8001
+
+# 시나리오 3: GPU 1에서만 서빙 (GPU 0은 학습용)
+MODEL_1_ENABLED=false
+MODEL_2_ENABLED=true
+```
+
+**API 접근:**
+
+```bash
+# 모델 1 (GPU 0)
+curl http://localhost:8000/v1/models
+
+# 모델 2 (GPU 1)
+curl http://localhost:8001/v1/models
 ```
 
 **GPU 할당 확인:**
@@ -153,19 +200,29 @@ CUDA_VISIBLE_DEVICES=1 python src/train/01_lora_finetune.py
 # GPU 할당 상태 확인 스크립트
 ./scripts/check_gpu_allocation.sh
 
-# 또는 수동 확인
-docker inspect mlops-vllm | jq '.[0].HostConfig.DeviceRequests'
+# nvidia-smi로 프로세스 확인
 nvidia-smi
 ```
 
-**Docker Compose 설정:**
+### 아키텍처
 
-```yaml
-deploy:
-  resources:
-    reservations:
-      devices:
-        - driver: nvidia
-          device_ids: ['${GPU_DEVICE_ID:-0}']
-          capabilities: [gpu]
+```
+                    ┌─────────────────────────────────────┐
+                    │         vLLM Container              │
+                    │         (mlops-vllm)                │
+                    │                                     │
+                    │  ┌─────────────┐ ┌─────────────┐   │
+                    │  │  Model 1    │ │  Model 2    │   │
+                    │  │  GPU 0      │ │  GPU 1      │   │
+                    │  │  :8000      │ │  :8001      │   │
+                    │  └─────────────┘ └─────────────┘   │
+                    │                                     │
+                    │  start-vllm.sh (프로세스 관리)      │
+                    └─────────────────────────────────────┘
+                              ↓              ↓
+                    ┌─────────────┐ ┌─────────────┐
+                    │   GPU 0     │ │   GPU 1     │
+                    │  RTX 5090   │ │ RTX 5060 Ti │
+                    │   32GB      │ │    16GB     │
+                    └─────────────┘ └─────────────┘
 ```
