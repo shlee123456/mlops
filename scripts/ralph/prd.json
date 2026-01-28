@@ -50,7 +50,7 @@
       ],
       "priority": 3,
       "passes": false,
-      "notes": ""
+      "notes": "Grafana 정상 동작, Loki 데이터소스 연결 확인. Alloy가 로그 파일 tail 중이나 Loki에 데이터 저장 안 됨. JSON 처리 문제 발견. 별도 PRD로 분리 필요."
     },
     {
       "id": "US-004",

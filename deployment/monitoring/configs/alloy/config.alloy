@@ -106,6 +106,14 @@ discovery.docker "containers" {
 
 discovery.relabel "docker_logs" {
   targets = discovery.docker.containers.targets
+
+  // Drop monitoring stack logs to avoid rate limit issues
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/mlops-(loki|alloy|prometheus|grafana)"
+    action        = "drop"
+  }
+
   rule {
     source_labels = ["__meta_docker_container_name"]
     regex         = "/mlops-(.*)"

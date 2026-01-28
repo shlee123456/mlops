@@ -59,3 +59,29 @@ Started: 2026-01-28
   - **Verification**: `curl http://localhost:3100/loki/api/v1/labels`로 수집 중인 라벨 확인 가능
   - **Gotcha**: Alloy는 파일이 없으면 에러를 출력하지만, 파일이 생성되면 자동 감지하지 않을 수 있음 (재시작 필요)
 ---
+## 2026-01-28 15:15 - US-003 (진행 중 - 문제 발견)
+- Grafana 로그 조회 테스트 시작
+- **검증 결과:**
+  1. ✓ Grafana 정상 동작 (http://localhost:3000)
+  2. ✓ Loki 데이터소스 연결 확인
+  3. ✓ Alloy가 FastAPI 로그 파일 tail 중 (offset 증가 확인)
+  4. ✓ Loki rate limit 문제 해결 (모니터링 스택 로그 drop)
+  5. ✗ Loki에 실제 로그 데이터 저장되지 않음
+
+- **Files changed:**
+  - `deployment/monitoring/configs/alloy/config.alloy`: 모니터링 스택 로그 drop 규칙 추가
+
+- **발견한 문제:**
+  - **문제**: Alloy가 로그 파일을 읽고 있으나 Loki 쿼리 시 결과 없음
+  - **원인 추정**: JSON 처리 단계(loki.process.json_logs)에서 로그 파싱 실패 가능성
+  - **증상**: 
+    - Alloy 로그에 에러 없음, 정상적으로 tail 중
+    - Loki API에서 라벨은 수집됨 (job, service, log_type)
+    - 실제 로그 데이터는 조회되지 않음
+
+- **Learnings for future iterations:**
+  - **Pattern**: Loki rate limit은 `429 Too Many Requests` 에러로 표시됨
+  - **Gotcha**: Alloy가 로그를 읽어도 JSON 파싱 실패 시 Loki에 데이터 전송 안 됨
+  - **Context**: Loki API로 라벨 확인: `curl http://localhost:3100/loki/api/v1/labels`
+  - **Next**: JSON 로그 처리 파이프라인 디버깅 필요, 또는 Docker stdout 로그 수집으로 대체 고려
+---
