@@ -1,12 +1,17 @@
 # Ralph Progress Log
-Started: 2026-01-28
+Started: Wed Jan 28 03:29:39 PM KST 2026
 ---
 
-## Codebase Patterns
-- **Docker 로그 파일**: 컨테이너 로그를 호스트에 저장 시 `/logs` 디렉토리를 호스트의 `logs/[service]/`에 마운트. Dockerfile에서 `/logs` 디렉토리 생성 필수.
-- **Bash 로그 리다이렉션**: 백그라운드 프로세스 로그를 파일과 콘솔에 동시 출력하려면 서브셸 + 파이프 방식 `(cmd 2>&1 | tee -a logfile) &` 사용
-- **HuggingFace 캐시**: docker-compose에서 HuggingFace 캐시를 read-only(`:ro`)로 마운트하면 모델 다운로드 불가. 쓰기 가능하게 마운트 필요.
-- **Grafana Alloy 로그 파일**: `loki.source.file`은 glob 패턴보다 정확한 파일명을 선호함. 고정 파일명 사용 권장.
-- **Loki rate limit**: 동일 스트림에 과도한 로그 발생 시 `429 Too Many Requests` 에러. 모니터링 스택 자체 로그는 drop 처리 필요.
-
+## 2026-01-28 15:34 - US-001
+- Alloy JSON 파싱 파이프라인에서 FastAPI 로그의 "event" 필드가 누락되어 Loki에 데이터가 저장되지 않던 문제 발견 및 수정
+- Files changed:
+  - deployment/monitoring/configs/alloy/config.alloy
+- **Learnings for future iterations:**
+  - FastAPI는 structlog를 사용하여 "event" 필드에 메시지를 저장하는데, 일반적인 로그 포맷은 "message" 필드 사용
+  - Alloy의 `stage.json`에서 필드를 추출할 때, 로그 포맷과 정확히 일치해야 함
+  - `stage.template`을 사용하면 여러 필드 중 하나를 선택하여 output으로 매핑 가능
+  - Loki instant query(`/loki/api/v1/query`)는 in-memory 버퍼만 조회하므로, 과거 데이터는 query_range 사용 필요
+  - Alloy는 파일 끝(EOF)에서 tailing을 시작하므로, 기존 로그는 수집되지 않고 새 로그만 수집됨
+  - Docker logs와 file-based logs 모두 정상 작동 확인 (각각 다른 label 사용)
+  - JSON 필드 추출 확인 방법: Loki API의 stream 객체에서 labels 확인
 ---
