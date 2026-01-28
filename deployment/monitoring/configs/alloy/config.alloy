@@ -71,6 +71,18 @@ loki.source.file "fastapi" {
   forward_to = [loki.process.json_logs.receiver]
 }
 
+// ============================================
+// Test Log Source - Plain Text (for US-002)
+// ============================================
+// Simple plaintext log source to verify Loki connectivity
+// without JSON processing complexity
+loki.source.file "test_plaintext" {
+  targets = [
+    {__path__ = "/logs/test/plaintext.log", job = "test", service = "test", log_type = "plaintext"},
+  ]
+  forward_to = [loki.write.default.receiver]
+}
+
 // JSON log processing pipeline
 loki.process "json_logs" {
   stage.json {
