@@ -30,3 +30,32 @@ Started: 2026-01-28
   - **Context**: vLLM은 모델 로딩에 시간이 오래 걸림 (TinyLlama-1.1B도 수 분 소요)
   - **Next**: Docker 이미지 재빌드 및 실제 로그 파일 생성 테스트 필요
 ---
+## 2026-01-28 14:52 - US-002
+- Loki/Alloy 모니터링 설정 검증 완료
+- **Files changed:**
+  - `deployment/monitoring/configs/alloy/config.alloy`: MLflow, vLLM 로그 소스 수정
+  - `deployment/mlflow/start-mlflow.sh`: 고정 로그 파일명 사용 (mlflow.log)
+  - `deployment/serving/start-vllm.sh`: 고정 로그 파일명 사용 (model1.log, model2.log)
+
+- **검증 결과:**
+  1. ✓ Alloy 설정 파일: 모든 로그 경로 올바르게 설정됨
+  2. ✓ docker-compose.monitoring.yml: 볼륨 마운트 `../logs:/logs:ro` 정상
+  3. ✓ 모니터링 스택 기동 성공 (Loki, Prometheus, Grafana, Alloy)
+  4. ✓ Loki API 확인: 라벨 수집 중 (job, log_type, service, etc.)
+  5. ✓ FastAPI 로그 정상 수집 (파일 기반: `/logs/fastapi/app.log`)
+  6. ✓ Docker 컨테이너 로그 수집 (vllm, loki, grafana, prometheus 등)
+
+- **발견 및 수정한 문제:**
+  - **문제**: Alloy의 `loki.source.file`이 glob 패턴(`*.log`)을 제대로 처리하지 못함
+  - **원인**: Alloy가 glob 패턴을 직접 `stat`으로 확인하려 함
+  - **해결**: 타임스탬프 기반 동적 파일명 → 고정 파일명으로 변경
+    - MLflow: `mlflow_YYYYMMDD_HHMMSS.log` → `mlflow.log`
+    - vLLM: `model1_YYYYMMDD_HHMMSS.log` → `model1.log`, `model2.log`
+
+- **Learnings for future iterations:**
+  - **Pattern**: Grafana Alloy의 `loki.source.file`은 glob 패턴보다 정확한 파일명을 선호함
+  - **Pattern**: 로그 파일은 고정된 이름을 사용하고 로그 로테이션은 애플리케이션 레벨에서 처리하는 것이 좋음
+  - **Context**: Loki는 라벨 기반 쿼리 지원 (`{job="fastapi"}`, `{log_type="api"}`)
+  - **Verification**: `curl http://localhost:3100/loki/api/v1/labels`로 수집 중인 라벨 확인 가능
+  - **Gotcha**: Alloy는 파일이 없으면 에러를 출력하지만, 파일이 생성되면 자동 감지하지 않을 수 있음 (재시작 필요)
+---

@@ -4,9 +4,8 @@ set -e
 # Create log directory if it doesn't exist
 mkdir -p /logs
 
-# Generate timestamp-based log filename
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-LOG_FILE="/logs/mlflow_${TIMESTAMP}.log"
+# Use fixed log filename for Loki collection
+LOG_FILE="/logs/mlflow.log"
 
 echo "Starting MLflow server..."
 echo "Logs will be written to: ${LOG_FILE}"
