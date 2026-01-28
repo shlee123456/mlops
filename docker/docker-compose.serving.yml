@@ -22,7 +22,7 @@ services:
     volumes:
       - ../models:/models
       - ../logs/vllm:/logs
-      - ~/.cache/huggingface:/root/.cache/huggingface:ro
+      - ~/.cache/huggingface:/root/.cache/huggingface
     ports:
       - "${MODEL_1_PORT:-8000}:${MODEL_1_PORT:-8000}"
       - "${MODEL_2_PORT:-8001}:${MODEL_2_PORT:-8001}"

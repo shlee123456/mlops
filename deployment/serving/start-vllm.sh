@@ -28,14 +28,13 @@ if [ "${MODEL_1_ENABLED:-false}" = "true" ] && [ -n "$MODEL_1_PATH" ]; then
     MODEL_1_LOG="$LOG_DIR/model1_${TIMESTAMP}.log"
     echo "  Log File: $MODEL_1_LOG"
 
-    CUDA_VISIBLE_DEVICES=${MODEL_1_GPU:-0} python -m vllm.entrypoints.openai.api_server \
+    (CUDA_VISIBLE_DEVICES=${MODEL_1_GPU:-0} python -m vllm.entrypoints.openai.api_server \
         --model "$MODEL_1_PATH" \
         --host 0.0.0.0 \
         --port ${MODEL_1_PORT:-8000} \
         --gpu-memory-utilization ${MODEL_1_GPU_MEMORY:-0.9} \
-        --max-model-len ${MODEL_1_MAX_LEN:-4096} \
-        > >(tee -a "$MODEL_1_LOG" | sed 's/^/[Model1] /') \
-        2> >(tee -a "$MODEL_1_LOG" | sed 's/^/[Model1] /' >&2) &
+        --max-model-len ${MODEL_1_MAX_LEN:-4096} 2>&1 | \
+        tee -a "$MODEL_1_LOG" | sed -u 's/^/[Model1] /') &
 
     PIDS+=($!)
     echo "[Model 1] Started with PID ${PIDS[-1]}"
@@ -55,14 +54,13 @@ if [ "${MODEL_2_ENABLED:-false}" = "true" ] && [ -n "$MODEL_2_PATH" ]; then
     MODEL_2_LOG="$LOG_DIR/model2_${TIMESTAMP}.log"
     echo "  Log File: $MODEL_2_LOG"
 
-    CUDA_VISIBLE_DEVICES=${MODEL_2_GPU:-1} python -m vllm.entrypoints.openai.api_server \
+    (CUDA_VISIBLE_DEVICES=${MODEL_2_GPU:-1} python -m vllm.entrypoints.openai.api_server \
         --model "$MODEL_2_PATH" \
         --host 0.0.0.0 \
         --port ${MODEL_2_PORT:-8001} \
         --gpu-memory-utilization ${MODEL_2_GPU_MEMORY:-0.9} \
-        --max-model-len ${MODEL_2_MAX_LEN:-4096} \
-        > >(tee -a "$MODEL_2_LOG" | sed 's/^/[Model2] /') \
-        2> >(tee -a "$MODEL_2_LOG" | sed 's/^/[Model2] /' >&2) &
+        --max-model-len ${MODEL_2_MAX_LEN:-4096} 2>&1 | \
+        tee -a "$MODEL_2_LOG" | sed -u 's/^/[Model2] /') &
 
     PIDS+=($!)
     echo "[Model 2] Started with PID ${PIDS[-1]}"
