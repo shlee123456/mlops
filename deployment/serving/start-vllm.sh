@@ -4,8 +4,13 @@
 
 set -e
 
+# 로그 파일 경로 설정
+LOG_DIR="/logs"
+mkdir -p "$LOG_DIR"
+
 echo "=========================================="
 echo "vLLM Multi-Model Server Starting..."
+echo "Logs will be written to: $LOG_DIR"
 echo "=========================================="
 
 PIDS=()
@@ -19,13 +24,16 @@ if [ "${MODEL_1_ENABLED:-false}" = "true" ] && [ -n "$MODEL_1_PATH" ]; then
     echo "  GPU Memory: ${MODEL_1_GPU_MEMORY:-0.9}"
     echo "  Max Length: ${MODEL_1_MAX_LEN:-4096}"
 
-    CUDA_VISIBLE_DEVICES=${MODEL_1_GPU:-0} python -m vllm.entrypoints.openai.api_server \
+    MODEL_1_LOG="$LOG_DIR/model1.log"
+    echo "  Log File: $MODEL_1_LOG"
+
+    (CUDA_VISIBLE_DEVICES=${MODEL_1_GPU:-0} python -m vllm.entrypoints.openai.api_server \
         --model "$MODEL_1_PATH" \
         --host 0.0.0.0 \
         --port ${MODEL_1_PORT:-8000} \
         --gpu-memory-utilization ${MODEL_1_GPU_MEMORY:-0.9} \
-        --max-model-len ${MODEL_1_MAX_LEN:-4096} \
-        2>&1 | sed 's/^/[Model1] /' &
+        --max-model-len ${MODEL_1_MAX_LEN:-4096} 2>&1 | \
+        tee -a "$MODEL_1_LOG" | sed -u 's/^/[Model1] /') &
 
     PIDS+=($!)
     echo "[Model 1] Started with PID ${PIDS[-1]}"
@@ -42,13 +50,16 @@ if [ "${MODEL_2_ENABLED:-false}" = "true" ] && [ -n "$MODEL_2_PATH" ]; then
     echo "  GPU Memory: ${MODEL_2_GPU_MEMORY:-0.9}"
     echo "  Max Length: ${MODEL_2_MAX_LEN:-4096}"
 
-    CUDA_VISIBLE_DEVICES=${MODEL_2_GPU:-1} python -m vllm.entrypoints.openai.api_server \
+    MODEL_2_LOG="$LOG_DIR/model2.log"
+    echo "  Log File: $MODEL_2_LOG"
+
+    (CUDA_VISIBLE_DEVICES=${MODEL_2_GPU:-1} python -m vllm.entrypoints.openai.api_server \
         --model "$MODEL_2_PATH" \
         --host 0.0.0.0 \
         --port ${MODEL_2_PORT:-8001} \
         --gpu-memory-utilization ${MODEL_2_GPU_MEMORY:-0.9} \
-        --max-model-len ${MODEL_2_MAX_LEN:-4096} \
-        2>&1 | sed 's/^/[Model2] /' &
+        --max-model-len ${MODEL_2_MAX_LEN:-4096} 2>&1 | \
+        tee -a "$MODEL_2_LOG" | sed -u 's/^/[Model2] /') &
 
     PIDS+=($!)
     echo "[Model 2] Started with PID ${PIDS[-1]}"
